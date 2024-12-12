@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/tigerImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="A sample picture"
+        android:scaleType="centerCrop"
+        android:src="@drawable/tiger"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/feature1Container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginBottom="5dp" />
+
+    <LinearLayout
+        android:id="@+id/feature1Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tigerImage">
+
+        <TextView
+            android:id="@+id/feature1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是一种动物"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature1RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature1Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature1Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature2Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature1Container">
+
+        <TextView
+            android:id="@+id/feature2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="很轻的"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature2RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature2Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature2Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature3Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature2Container">
+
+        <TextView
+            android:id="@+id/feature3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是友善的"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature3RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature3Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature3Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature4Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature3Container">
+
+        <TextView
+            android:id="@+id/feature4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="在家里可以找到"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature4RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature4Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature4Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature5Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature4Container">
+
+        <TextView
+            android:id="@+id/feature5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是捕食者"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature5RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature5Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature5Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature6Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature5Container">
+
+        <TextView
+            android:id="@+id/feature6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="羊毛制成的"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature6RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature6Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature6Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature7Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature6Container">
+
+        <TextView
+            android:id="@+id/feature7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="有两条腿"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature7RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature7Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature7Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature8Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature7Container">
+
+        <TextView
+            android:id="@+id/feature8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="动作迅速的"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature8RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature8Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature8Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature9Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature8Container">
+
+        <TextView
+            android:id="@+id/feature9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="可以吃人"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature9RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature9Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature9Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feature10Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feature9Container">
+
+        <TextView
+            android:id="@+id/feature10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="#FF6750A4"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="食肉的"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/feature10RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feature10Correct"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="正确" />
+
+            <RadioButton
+                android:id="@+id/feature10Incorrect"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:text="错误" />
+        </RadioGroup>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

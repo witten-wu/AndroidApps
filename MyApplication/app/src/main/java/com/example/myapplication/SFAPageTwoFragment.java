@@ -3,10 +3,10 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,8 +19,8 @@ import java.util.List;
 
 public class SFAPageTwoFragment extends Fragment {
 
-    private LinearLayout featuresContainer;       // 特征条目容器
-    private GridLayout trashcanItemsContainer; // 垃圾桶条目容器
+    private androidx.gridlayout.widget.GridLayout featuresContainer;       // 特征条目容器
+    private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
     private ImageView trashcanImage;             // 垃圾桶图片
     private List<String> trashcanContents;       // 用于记录垃圾桶的内容
 
@@ -119,7 +119,9 @@ public class SFAPageTwoFragment extends Fragment {
                                 ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                             }
                             // 如果条目未被任何容器接收，则还原到 featuresContainer
-                            featuresContainer.addView(droppedTextView);
+                            GridLayout.LayoutParams defaultParams = new GridLayout.LayoutParams();
+                            defaultParams.setGravity(Gravity.CENTER);
+                            featuresContainer.addView(droppedTextView, defaultParams);
                             trashcanContents.remove(droppedTextView.getText().toString());
                         }
                     }

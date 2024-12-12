@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -10,10 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.gridlayout.widget.GridLayout;
 
 public class SFAPageThreeFragment extends Fragment {
 
-    private LinearLayout featuresContainer;
+    private GridLayout featuresContainer;
 
     public SFAPageThreeFragment() {
         // Required empty public constructor
@@ -92,7 +94,13 @@ public class SFAPageThreeFragment extends Fragment {
                             ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                         }
 
-                        target.addView(droppedTextView);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        layoutParams.setMargins(5, 5, 5, 5);
+                        layoutParams.gravity = Gravity.CENTER;
+                        target.addView(droppedTextView, layoutParams);
 
                         setupTrashcanItem(droppedTextView);
                     }
@@ -109,7 +117,9 @@ public class SFAPageThreeFragment extends Fragment {
                                 ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                             }
                             // 如果条目未被任何容器接收，则还原到 featuresContainer
-                            featuresContainer.addView(droppedTextView);
+                            android.widget.GridLayout.LayoutParams defaultParams = new android.widget.GridLayout.LayoutParams();
+                            defaultParams.setGravity(Gravity.CENTER);
+                            featuresContainer.addView(droppedTextView, defaultParams);
                         }
                     }
                     target.setAlpha(1.0f);

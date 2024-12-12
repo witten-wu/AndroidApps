@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(new SFAPageOneFragment()); // 加载 PageOneFragment
             fragmentList.add(new SFAPageTwoFragment()); // 加载 PageTwoFragment
             fragmentList.add(new SFAPageThreeFragment()); // 加载 SFAPageThreeFragment
+            fragmentList.add(new SFAPageFourFragment()); // 加载 SFAPageFourFragment
         } else if ("B".equals(userSelection)) {
 //            fragmentList.add(new PageOneDiffFragment()); // 加载 PageOneDiffFragment
 //            fragmentList.add(new PageTwoFragment());    // 加载相同的 PageTwoFragment
