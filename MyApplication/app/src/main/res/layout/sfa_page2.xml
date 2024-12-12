@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/tigerImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="A sample picture"
+        android:scaleType="centerCrop"
+        android:src="@drawable/tiger"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <LinearLayout
+        android:id="@+id/featuresContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="20dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tigerImage">
+
+        <TextView
+            android:id="@+id/feature1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是一种动物"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="很轻的"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是友善的"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="在家里可以找到的"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="是捕食者"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="羊毛制成的"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="有两条腿"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="动作迅速的"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="可以吃人  "
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/feature10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="#FFAB3D"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:tag="true"
+            android:text="食肉的"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/trashcanContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:clipChildren="true"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 垃圾桶图片 -->
+        <ImageView
+            android:id="@+id/trashcan"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/trashcan"
+            android:contentDescription="Trashcan"
+            android:layout_gravity="center" />
+
+        <!-- 垃圾桶内部条目 -->
+        <GridLayout
+            android:id="@+id/trashcanItemsContainer"
+            android:layout_width="150dp"
+            android:layout_height="210dp"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"
+            android:columnCount="2"/>
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
