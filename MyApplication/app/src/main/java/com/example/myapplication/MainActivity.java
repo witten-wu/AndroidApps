@@ -26,13 +26,21 @@ public class MainActivity extends AppCompatActivity {
         // 动态构建 Fragment 列表
         List<Fragment> fragmentList = new ArrayList<>();
         if ("A".equals(userSelection)) {
-            fragmentList.add(new SFAPageOneFragment()); // 加载 PageOneFragment
-            fragmentList.add(new SFAPageTwoFragment()); // 加载 PageTwoFragment
-            fragmentList.add(new SFAPageThreeFragment()); // 加载 SFAPageThreeFragment
-            fragmentList.add(new SFAPageFourFragment()); // 加载 SFAPageFourFragment
+            fragmentList.add(new SFAPageOneFragment());
+            fragmentList.add(new SFAPageTwoFragment());
+            fragmentList.add(new SFAPageThreeFragment());
+            fragmentList.add(new SFAPageFourFragment());
+            fragmentList.add(new SFAPageFiveFragment());
+            fragmentList.add(new SFAPageSixFragment());
+            fragmentList.add(new SFAPageSevenFragment());
         } else if ("B".equals(userSelection)) {
-//            fragmentList.add(new PageOneDiffFragment()); // 加载 PageOneDiffFragment
-//            fragmentList.add(new PageTwoFragment());    // 加载相同的 PageTwoFragment
+            fragmentList.add(new VNESTPageOne());
+            fragmentList.add(new VNESTPageTwo());
+            fragmentList.add(new VNESTPageThree());
+            fragmentList.add(new VNESTPageFour());
+            fragmentList.add(new VNESTPageFive());
+            fragmentList.add(new VNESTPageSix());
+            fragmentList.add(new VNESTPageSeven());
         }
 
         // 设置适配器

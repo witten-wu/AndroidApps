@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SFAPageFourFragment extends Fragment {
+public class VNESTPageTwo extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.sfa_page4, container, false);
+        return inflater.inflate(R.layout.vnest_page2, container, false);
     }
 }
