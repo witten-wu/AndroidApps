@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,13 @@ public class MainActivity extends AppCompatActivity {
 
         // 获取用户的选择 ("A" 或 "B")
         String userSelection = getIntent().getStringExtra("selection");
+
+        // 根据用户选择动态设置屏幕方向
+        if ("B".equals(userSelection)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // 设置横屏
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 设置竖屏
+        }
 
         // 初始化 ViewPager2
         ViewPager2 viewPager = findViewById(R.id.viewPager);

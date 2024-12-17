@@ -1,24 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <LinearLayout
-        android:layout_marginTop="80dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="刚才讨论的动作叫什么"
-            android:textColor="#FF6750A4"
-            android:textSize="24sp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/boxPush"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:background="#FF6750A4"
+        android:gravity="center"
+        android:text="推"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/questionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="刚才讨论的动作叫什么？"
+        android:textColor="#FF6750A4"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/boxPush"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 点击显示按钮 -->
+    <Button
+        android:id="@+id/showButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="显示答案"
+        app:layout_constraintTop_toBottomOf="@id/questionText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

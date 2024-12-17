@@ -1,75 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!-- 包含三个 Box 的容器 -->
     <LinearLayout
         android:id="@+id/boxContainer"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 第一个 Box 和选项 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="30dp">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="#FF6750A4"
+                android:gravity="center"
+                android:text="谁"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- 谁的选项 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/option1_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="海草"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option1_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="工人"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option1_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="苹果"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option1_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="旅客"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 第二个 Box 和不可见选项 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="30dp">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="#FF6750A4"
+                android:gravity="center"
+                android:text="推"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- 推的不可见选项 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/option2_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="占位1"
+                    android:background="#FF6750A4"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:id="@+id/option2_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="占位2"
+                    android:background="#FF6750A4"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:id="@+id/option2_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="占位3"
+                    android:background="#FF6750A4"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:id="@+id/option2_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="占位4"
+                    android:background="#FF6750A4"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    android:layout_marginBottom="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 第三个 Box 和选项 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="#FF6750A4"
+                android:gravity="center"
+                android:text="什么"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- 什么的选项 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/option3_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="行李"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option3_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="司机"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option3_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="板车"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/option3_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="#0074A8"
+                    android:elevation="3dp"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:text="金鱼"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- LineView 用于绘制线条，位于所有选项上方 -->
+    <com.example.myapplication.LineView
+        android:id="@+id/lineView"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
-        android:orientation="vertical">
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- 第一个 Box -->
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:background="#FF6750A4"
-            android:gravity="center"
-            android:text="谁"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/boxContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 第二个 Box -->
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:background="#FF6750A4"
-            android:gravity="center"
-            android:text="推"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <!-- 第三个 Box -->
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="50dp"
-            android:background="#FF6750A4"
-            android:gravity="center"
-            android:text="什么"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
+        <!-- 提交按钮 -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:text="谁：1）海草，2）工人，3）苹果，4）旅客"
-            android:textColor="#000000"
-            android:textSize="16sp" />
+            android:text="提交"
+            android:layout_marginEnd="20dp" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <!-- 清空按钮 -->
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="什么：1）行李，2）司机，3）板车，4）金鱼"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
+            android:backgroundTint="@color/black"
+            android:text="清空" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
