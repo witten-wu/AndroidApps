@@ -9,7 +9,7 @@
         android:id="@+id/boxContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical">
 
         <TextView
@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"
             android:gravity="center"
-            android:text="工人什么时候推板车"
+            android:text="XX什么时候推XX"
             android:textColor="#FF6750A4"
             android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"
             android:gravity="center"
-            android:text="工人为什么推板车"
+            android:text="XX为什么推XX"
             android:textColor="#FF6750A4"
             android:textSize="24sp" />
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="工人在哪里推板车"
+            android:text="XX在哪里推XX"
             android:textColor="#FF6750A4"
             android:textSize="24sp" />
 

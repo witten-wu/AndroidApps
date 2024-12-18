@@ -6,6 +6,7 @@ import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,15 +15,28 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.widget.GridLayout;
 
+import com.google.android.flexbox.FlexboxLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SFAPageTwoFragment extends Fragment {
 
     private androidx.gridlayout.widget.GridLayout featuresContainer;       // 特征条目容器
-    private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
+    //private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
+
+    private FlexboxLayout trashcanItemsContainer; // 垃圾桶条目容器
     private ImageView trashcanImage;             // 垃圾桶图片
     private List<String> trashcanContents;       // 用于记录垃圾桶的内容
+
+    // 正确的特性列表
+    private final List<String> correctFeatures = new ArrayList<String>() {{
+        add("是一种动物");
+        add("是捕食者");
+        add("食肉的");
+        add("动作迅速的");
+        add("可以吃人");
+    }};
 
     public SFAPageTwoFragment() {
         // Required empty public constructor
@@ -44,9 +58,14 @@ public class SFAPageTwoFragment extends Fragment {
         trashcanItemsContainer = view.findViewById(R.id.trashcanItemsContainer);
         trashcanImage = view.findViewById(R.id.trashcan);
         trashcanContents = new ArrayList<>();
+        Button submitButton = view.findViewById(R.id.submitButton);
 
         // 设置拖拽功能
         setupDragAndDrop();
+
+        submitButton.setOnClickListener(v -> {
+            checkFeedback();
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -57,6 +76,7 @@ public class SFAPageTwoFragment extends Fragment {
 
             // 设置长按监听器，启动拖动
             featureView.setOnLongClickListener(v -> {
+                featureView.setBackgroundColor(android.graphics.Color.parseColor("#FF6750A4")); // 恢复原始颜色
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
                 // 启动拖动，并将当前 View 的状态传递给 DragEvent
                 v.startDragAndDrop(null, shadowBuilder, v, 0);
@@ -96,9 +116,12 @@ public class SFAPageTwoFragment extends Fragment {
                             ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                         }
 
-                        // 将条目添加到垃圾桶中的 GridLayout
-                        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                        params.setMargins(16, 16, 16, 16); // 设置条目之间间距
+                        // 添加到 FlexboxLayout 容器
+                        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        params.setMargins(16, 16, 16, 16);
                         trashcanItemsContainer.addView(droppedTextView, params);
 
                         trashcanContents.add(droppedTextView.getText().toString());
@@ -137,9 +160,44 @@ public class SFAPageTwoFragment extends Fragment {
     // 为垃圾桶条目设置拖动功能
     private void setupTrashcanItem(TextView item) {
         item.setOnLongClickListener(v -> {
+            // 重置背景颜色
+            item.setBackgroundColor(android.graphics.Color.parseColor("#FF6750A4")); // 恢复原始颜色
+
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             v.startDragAndDrop(null, shadowBuilder, v, 0);
             return true;
         });
+    }
+
+    private void checkFeedback() {
+        // 1. 检查垃圾桶内的特性
+        for (int i = 0; i < trashcanItemsContainer.getChildCount(); i++) {
+            View child = trashcanItemsContainer.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView featureView = (TextView) child;
+                String featureText = featureView.getText().toString();
+
+                // 如果特性正确，标绿色；否则标红
+                if (correctFeatures.contains(featureText)) {
+                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")); // 绿色
+                } else {
+                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色
+                }
+            }
+        }
+
+        // 2. 检查遗漏在外的特性
+        for (int i = 0; i < featuresContainer.getChildCount(); i++) {
+            View child = featuresContainer.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView featureView = (TextView) child;
+                String featureText = featureView.getText().toString();
+
+                // 如果遗漏特性是正确答案，标红
+                if (correctFeatures.contains(featureText)) {
+                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色
+                }
+            }
+        }
     }
 }

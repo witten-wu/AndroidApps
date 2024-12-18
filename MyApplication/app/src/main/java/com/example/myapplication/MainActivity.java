@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -13,13 +14,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ViewPager2 viewPager;
+    private ViewPagerAdapter adapter;
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private String userSelection; // 用户选择的 A 或 B
+    private boolean isSwipeEnabled = true; // 是否允许滑动
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // 获取用户的选择 ("A" 或 "B")
-        String userSelection = getIntent().getStringExtra("selection");
+        userSelection = getIntent().getStringExtra("selection");
 
         // 根据用户选择动态设置屏幕方向
         if ("B".equals(userSelection)) {
@@ -29,10 +36,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 初始化 ViewPager2
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
 
-        // 动态构建 Fragment 列表
-        List<Fragment> fragmentList = new ArrayList<>();
         if ("A".equals(userSelection)) {
             fragmentList.add(new SFAPageOneFragment());
             fragmentList.add(new SFAPageTwoFragment());
@@ -44,7 +49,14 @@ public class MainActivity extends AppCompatActivity {
         } else if ("B".equals(userSelection)) {
             fragmentList.add(new VNESTPageOne());
             fragmentList.add(new VNESTPageTwo());
-            fragmentList.add(new VNESTPageThree());
+            fragmentList.add(new VNESTPageThree(new VNESTPageThree.SelectionCallback() {
+                @Override
+                public void onSelect(String subject, String object) {
+                    updateVNESTPageFour(subject, object);
+                    isSwipeEnabled = true;
+                    setViewPagerSwipeEnabled(viewPager, true);
+                }
+            }));
             fragmentList.add(new VNESTPageFour());
             fragmentList.add(new VNESTPageFive());
             fragmentList.add(new VNESTPageSix());
@@ -52,8 +64,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 设置适配器
-        ViewPagerAdapter adapter = new ViewPagerAdapter(this, fragmentList);
+        adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
+                // 检测是否滑动到 VNESTPageThree
+                if ("B".equals(userSelection) && position == 2) { // 第三个 Fragment 是 VNESTPageThree
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                }
+            }
+        });
     }
 
     // ViewPager2 的适配器
@@ -74,6 +99,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return fragments.size();
+        }
+    }
+
+    private void updateVNESTPageFour(String subject, String object) {
+        // 创建一个新的 VNESTPageFour 实例，并传入参数
+        VNESTPageFour newFragment = VNESTPageFour.newInstance(subject, object);
+
+        // 替换 Fragment 列表中的 VNESTPageFour
+        fragmentList.set(3, newFragment);
+
+        // 通知适配器更新数据
+        adapter.notifyItemChanged(3);
+
+        // 自动跳转到 VNESTPageFour
+        viewPager.setCurrentItem(3, true);
+    }
+
+    // 禁用或启用 ViewPager2 滑动
+    private void setViewPagerSwipeEnabled(ViewPager2 viewPager, boolean enabled) {
+        RecyclerView recyclerView = (RecyclerView) viewPager.getChildAt(0);
+        if (recyclerView != null) {
+            recyclerView.setOnTouchListener((v, event) -> !enabled); // 返回 true 禁用滑动
         }
     }
 }
