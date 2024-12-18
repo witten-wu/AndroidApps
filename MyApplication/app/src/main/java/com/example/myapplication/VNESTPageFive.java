@@ -113,7 +113,7 @@ public class VNESTPageFive extends Fragment {
         LinearLayout questionLayout = new LinearLayout(getContext());
         questionLayout.setOrientation(LinearLayout.HORIZONTAL); // 水平排列
         questionLayout.setGravity(Gravity.CENTER_HORIZONTAL); // 整体居中对齐
-        questionLayout.setPadding(16, 0, 16, 16);
+        questionLayout.setPadding(8, 8, 8, 8);
         // 动态生成正确答案的 ID
         int correctAnswerId = generateUniqueId();
 
@@ -128,7 +128,7 @@ public class VNESTPageFive extends Fragment {
         questionText.setGravity(Gravity.CENTER_VERTICAL); // 垂直居中
         LinearLayout.LayoutParams questionTextParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        questionTextParams.setMarginEnd(32); // 设置右边距，避免文本和选项过于靠近
+        //questionTextParams.setMarginEnd(32); // 设置右边距，避免文本和选项过于靠近
         questionText.setLayoutParams(questionTextParams);
         questionLayout.addView(questionText);
 
@@ -143,7 +143,7 @@ public class VNESTPageFive extends Fragment {
         RadioButton buttonA = new RadioButton(getContext());
         buttonA.setText("正确");
         buttonA.setGravity(Gravity.CENTER);
-        buttonA.setPadding(16, 16, 16, 16); // 设置选项的内边距
+        buttonA.setPadding(8, 8, 8, 8); // 设置选项的内边距
         if (question.correctAnswer) { // 如果 A 是正确答案
             buttonA.setId(correctAnswerId);
         } else {
@@ -155,7 +155,7 @@ public class VNESTPageFive extends Fragment {
         RadioButton buttonB = new RadioButton(getContext());
         buttonB.setText("错误");
         buttonB.setGravity(Gravity.CENTER);
-        buttonA.setPadding(16, 16, 16, 16); // 设置选项的内边距
+        buttonB.setPadding(8, 8, 8, 8); // 设置选项的内边距
         if (!question.correctAnswer) { // 如果 B 是正确答案
             buttonB.setId(correctAnswerId);
         } else {
@@ -169,7 +169,7 @@ public class VNESTPageFive extends Fragment {
         // 添加问题布局到容器
         LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        containerParams.setMargins(0, 16, 0, 16); // 间距调整
+        containerParams.setMargins(8, 8, 8, 8); // 间距调整
         questionLayout.setLayoutParams(containerParams);
 
         questionsContainer.addView(questionLayout);

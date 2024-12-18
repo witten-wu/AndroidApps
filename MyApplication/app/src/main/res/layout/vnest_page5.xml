@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/submitButton"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/submitButton"

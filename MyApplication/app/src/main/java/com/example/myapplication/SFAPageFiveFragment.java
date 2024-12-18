@@ -119,7 +119,7 @@ public class SFAPageFiveFragment extends Fragment {
         LinearLayout questionLayout = new LinearLayout(getContext());
         questionLayout.setOrientation(LinearLayout.HORIZONTAL); // 水平排列
         questionLayout.setGravity(Gravity.CENTER); // 居中对齐
-        questionLayout.setPadding(16, 16, 16, 16);
+        questionLayout.setPadding(8, 8, 8, 8);
 
         // 动态生成正确答案的 ID
         int correctAnswerId = generateUniqueId();

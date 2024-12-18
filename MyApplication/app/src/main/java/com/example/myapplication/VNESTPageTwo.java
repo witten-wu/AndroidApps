@@ -83,7 +83,7 @@ public class VNESTPageTwo extends Fragment {
 
                         // 按下时记录起点
                         selectedStart = v;
-                        startCoords = getViewCenter((TextView) selectedStart); // 获取文字的中心坐标
+                        startCoords = getTextSideCoordinates((TextView) selectedStart, false); // 获取文字的中心坐标
                         lineView.startDrawing(startCoords[0], startCoords[1]); // 使用文字中心作为起点
                         return true;
 
@@ -105,7 +105,7 @@ public class VNESTPageTwo extends Fragment {
                         if (endOption != null && !isConnectionExists(selectedStart, endOption)) {
                             if (userConnections.size() < 2) {
                                 // 获取起点的右侧坐标和终点的左侧坐标
-                                float[] startCoords = getTextSideCoordinates((TextView) selectedStart, false); // 起点右侧
+                                float[] startCoords = getTextSideCoordinates((TextView) selectedStart, true); // 起点左侧
                                 float[] endCoords = getTextSideCoordinates((TextView) endOption, true); // 终点左侧
 
                                 // 添加连线
@@ -145,18 +145,17 @@ public class VNESTPageTwo extends Fragment {
                 if (correctConnections.contains(new Pair<>(startText, endText))) {
                     // 正确连线 -> 绿色
                     lineView.addLine(
-                            getTextSideCoordinates((TextView) connection.first, false)[0], // 起点右侧
-                            getTextSideCoordinates((TextView) connection.first, false)[1],
-                            getTextSideCoordinates((TextView) connection.second, true)[0], // 终点左侧
+                            getTextSideCoordinates((TextView) connection.first, true)[0],
+                            getTextSideCoordinates((TextView) connection.first, true)[1],
+                            getTextSideCoordinates((TextView) connection.second, true)[0],
                             getTextSideCoordinates((TextView) connection.second, true)[1],
                             Color.GREEN
                     );
                 } else {
-                    // 错误连线 -> 红色
                     lineView.addLine(
-                            getTextSideCoordinates((TextView) connection.first, false)[0], // 起点右侧
-                            getTextSideCoordinates((TextView) connection.first, false)[1],
-                            getTextSideCoordinates((TextView) connection.second, true)[0], // 终点左侧
+                            getTextSideCoordinates((TextView) connection.first, true)[0],
+                            getTextSideCoordinates((TextView) connection.first, true)[1],
+                            getTextSideCoordinates((TextView) connection.second, true)[0],
                             getTextSideCoordinates((TextView) connection.second, true)[1]
                     );
                 }
@@ -170,9 +169,9 @@ public class VNESTPageTwo extends Fragment {
                 if (startView != null && endView != null && !isConnectionExists(startView, endView)) {
                     // 绘制正确答案（绿色）
                     lineView.addLine(
-                            getTextSideCoordinates((TextView) startView, false)[0], // 起点右侧
-                            getTextSideCoordinates((TextView) startView, false)[1],
-                            getTextSideCoordinates((TextView) endView, true)[0], // 终点左侧
+                            getTextSideCoordinates((TextView) startView, true)[0],
+                            getTextSideCoordinates((TextView) startView, true)[1],
+                            getTextSideCoordinates((TextView) endView, true)[0],
                             getTextSideCoordinates((TextView) endView, true)[1],
                             Color.GREEN
                     );
@@ -228,15 +227,6 @@ public class VNESTPageTwo extends Fragment {
         }
     }
 
-    // 获取 View 的中心点坐标
-    private float[] getViewCenter(View view) {
-        int[] location = new int[2];
-        view.getLocationOnScreen(location); // 获取 View 的屏幕位置
-        float centerX = location[0] + view.getWidth() / 2f; // 中心 X 坐标
-        float centerY = location[1] + view.getHeight() / 2f; // 中心 Y 坐标
-        return new float[]{centerX, centerY};
-    }
-
     private void setupClearButton(Button clearButton) {
         clearButton.setOnClickListener(v -> {
             // 清空所有连线
@@ -245,46 +235,6 @@ public class VNESTPageTwo extends Fragment {
             userConnections.clear();
         });
     }
-
-    private float[] getTextCenter(TextView textView) {
-        // 获取 TextView 的屏幕位置
-        int[] location = new int[2];
-        textView.getLocationOnScreen(location);
-
-        // 获取 TextView 的宽度和高度
-        int textViewWidth = textView.getWidth();
-        int textViewHeight = textView.getHeight();
-
-        // 获取文字的布局
-        Layout layout = textView.getLayout();
-        if (layout == null) {
-            // 如果 Layout 不存在，返回 TextView 的几何中心
-            return new float[]{
-                    location[0] + textViewWidth / 2f,
-                    location[1] + textViewHeight / 2f
-            };
-        }
-
-        // 获取第一行文字的基线、上升量和下降量
-        float baseline = layout.getLineBaseline(0);
-        float ascent = layout.getLineAscent(0);
-        float descent = layout.getLineDescent(0);
-
-        // 计算文字的实际高度
-        float textHeight = -ascent + descent;
-
-        // 修正横向中心
-        float textCenterX = location[0] + textViewWidth / 2f;
-
-        // 修正纵向中心
-        // location[1] 是 TextView 顶部的屏幕 Y 坐标
-        // baseline 是相对于 TextView 顶部的偏移
-        // 文字的中心需要从 baseline 上移一半文字高度
-        float textCenterY = location[1] + baseline - textHeight / 2f;
-
-        return new float[]{textCenterX, textCenterY};
-    }
-
 
     // 根据触摸点找到目标选项
     private View findTargetOption(List<View> options, float x, float y) {
