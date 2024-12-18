@@ -83,8 +83,8 @@ public class VNESTPageTwo extends Fragment {
 
                         // 按下时记录起点
                         selectedStart = v;
-                        startCoords = getTextSideCoordinates((TextView) selectedStart, false); // 获取文字的中心坐标
-                        lineView.startDrawing(startCoords[0], startCoords[1]); // 使用文字中心作为起点
+                        startCoords = getTextSideCoordinates((TextView) selectedStart, true);
+                        lineView.startDrawing(startCoords[0], startCoords[1]);
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
@@ -195,35 +195,26 @@ public class VNESTPageTwo extends Fragment {
         int[] location = new int[2];
         textView.getLocationOnScreen(location);
 
-        // 获取文字的布局信息
-        Layout layout = textView.getLayout();
-        if (layout == null) {
-            // 如果 Layout 不存在，直接返回 TextView 的边缘作为坐标
-            if (isLeftSide) {
-                return new float[]{location[0], location[1] + textView.getHeight() / 2f};
-            } else {
-                return new float[]{location[0] + textView.getWidth(), location[1] + textView.getHeight() / 2f};
-            }
+        // 状态栏
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
         }
 
-        // 文字的基线、上升量和下降量
-        float baseline = layout.getLineBaseline(0);
-        float ascent = layout.getLineAscent(0);
-        float descent = layout.getLineDescent(0);
-
-        // 计算文字的实际高度
-        float textHeight = -ascent + descent;
-
         // 修正纵向中心
-        float textCenterY = location[1] + baseline - textHeight / 2f;
+        float textCenterY = location[1] - statusBarHeight;
+
+        // 修正横向中心
+        float textCenterX = location[0];
 
         // 根据是否为左侧或右侧返回不同的横坐标
         if (isLeftSide) {
             // 左侧坐标
-            return new float[]{location[0], textCenterY};
+            return new float[]{textCenterX, textCenterY};
         } else {
             // 右侧坐标
-            return new float[]{location[0] + textView.getWidth(), textCenterY};
+            return new float[]{textCenterX + textView.getWidth(), textCenterY};
         }
     }
 
