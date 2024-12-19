@@ -170,6 +170,7 @@ public class SFAPageTwoFragment extends Fragment {
     }
 
     private void checkFeedback() {
+        boolean allCorrect = true; // 用于标记是否全部正确
         // 1. 检查垃圾桶内的特性
         for (int i = 0; i < trashcanItemsContainer.getChildCount(); i++) {
             View child = trashcanItemsContainer.getChildAt(i);
@@ -177,11 +178,11 @@ public class SFAPageTwoFragment extends Fragment {
                 TextView featureView = (TextView) child;
                 String featureText = featureView.getText().toString();
 
-                // 如果特性正确，标绿色；否则标红
                 if (correctFeatures.contains(featureText)) {
-                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")); // 绿色
+                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336"));
+                    allCorrect = false;
                 } else {
-                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色
+                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"));
                 }
             }
         }
@@ -193,11 +194,17 @@ public class SFAPageTwoFragment extends Fragment {
                 TextView featureView = (TextView) child;
                 String featureText = featureView.getText().toString();
 
-                // 如果遗漏特性是正确答案，标红
                 if (correctFeatures.contains(featureText)) {
+                    continue;
+                } else{
                     featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色
+                    allCorrect = false;
                 }
             }
+        }
+
+        if (allCorrect) {
+            android.widget.Toast.makeText(getContext(), "恭喜你全部回答正确！", android.widget.Toast.LENGTH_LONG).show();
         }
     }
 }

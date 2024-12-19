@@ -160,15 +160,22 @@ public class SFAPageThreeFragment extends Fragment {
     }
 
     private void checkFeedback() {
-        // 1. 遍历所有分类框
-        checkCategoryBox("functionBox", R.id.functionBox);
-        checkCategoryBox("characteristicsBox", R.id.characteristicsBox);
-        checkCategoryBox("physicalAttributesBox", R.id.physicalAttributesBox);
-        checkCategoryBox("locationBox", R.id.locationBox);
-        checkCategoryBox("categoryBox", R.id.categoryBox);
+        boolean allCorrect = true; // 用于标记是否全部正确
+
+        // 遍历所有分类框
+        allCorrect &= checkCategoryBox("functionBox", R.id.functionBox);
+        allCorrect &= checkCategoryBox("characteristicsBox", R.id.characteristicsBox);
+        allCorrect &= checkCategoryBox("physicalAttributesBox", R.id.physicalAttributesBox);
+        allCorrect &= checkCategoryBox("locationBox", R.id.locationBox);
+        allCorrect &= checkCategoryBox("categoryBox", R.id.categoryBox);
+
+        if (allCorrect) {
+            android.widget.Toast.makeText(getContext(), "回答正确！", android.widget.Toast.LENGTH_LONG).show();
+        }
     }
 
-    private void checkCategoryBox(String categoryName, int boxId) {
+    private boolean checkCategoryBox(String categoryName, int boxId) {
+        boolean isCorrect = true;
         LinearLayout box = getView().findViewById(boxId);
 
         for (int i = 0; i < box.getChildCount(); i++) {
@@ -186,9 +193,12 @@ public class SFAPageThreeFragment extends Fragment {
                         featureView.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")); // 绿色背景
                     } else {
                         featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色背景
+                        isCorrect = false;
                     }
                 }
             }
         }
+
+        return isCorrect;
     }
 }

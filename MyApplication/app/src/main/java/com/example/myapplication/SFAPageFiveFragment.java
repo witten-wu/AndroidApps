@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,6 +61,7 @@ public class SFAPageFiveFragment extends Fragment {
 
         // 设置提交按钮点击事件
         submitButton.setOnClickListener(v -> {
+            boolean allCorrect = true;
             for (int i = 0; i < questionsContainer.getChildCount(); i++) {
                 View childView = questionsContainer.getChildAt(i);
                 if (childView instanceof LinearLayout) {
@@ -79,6 +81,7 @@ public class SFAPageFiveFragment extends Fragment {
 
                     if (selectedButtonId == -1 || selectedButtonId != correctAnswerId) {
                         // 用户未选择选项 或 用户选择错误
+                        allCorrect = false; // 有错误的答案
 
                         // 高亮错误选项（如果有选择）
                         if (selectedButtonId != -1) {
@@ -95,6 +98,11 @@ public class SFAPageFiveFragment extends Fragment {
                         }
                     }
                 }
+            }
+            // 如果全部答对，显示恭喜提示
+            if (allCorrect) {
+                // 使用 Toast 提示用户
+                Toast.makeText(getContext(), "恭喜你全部回答正确！", Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -13,13 +13,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"
             android:gravity="center"
-            android:text="工人什么时候推板车？"
+            android:text="工人为什么推板车？"
             android:textColor="#FF6750A4"
             android:textSize="34sp" />
 

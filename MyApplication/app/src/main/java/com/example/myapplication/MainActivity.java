@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -18,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter adapter;
     private List<Fragment> fragmentList = new ArrayList<>();
     private String userSelection; // 用户选择的 A 或 B
-    private boolean isSwipeEnabled = true; // 是否允许滑动
+    // private boolean isSwipeEnabled = true; // 是否允许滑动
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSelect(String subject, String object) {
                     updateVNESTPageFour(subject, object);
-                    isSwipeEnabled = true;
-                    setViewPagerSwipeEnabled(viewPager, true);
+                    updateVNESTPageFour2(subject, object);
+                    updateVNESTPageFour3(subject, object);
+//                    isSwipeEnabled = true;
+//                    setViewPagerSwipeEnabled(viewPager, true);
+                    viewPager.setCurrentItem(3, true);
                 }
             }));
             fragmentList.add(new VNESTPageFour());
+            fragmentList.add(new VNESTPageFour2());
+            fragmentList.add(new VNESTPageFour3());
             fragmentList.add(new VNESTPageFive());
             fragmentList.add(new VNESTPageSix());
             fragmentList.add(new VNESTPageSeven());
@@ -67,18 +71,18 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
 
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-
-                // 检测是否滑动到 VNESTPageThree
-                if ("B".equals(userSelection) && position == 2) { // 第三个 Fragment 是 VNESTPageThree
-                    isSwipeEnabled = false; // 禁用滑动
-                    setViewPagerSwipeEnabled(viewPager, false);
-                }
-            }
-        });
+//        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                super.onPageSelected(position);
+//
+//                // 检测是否滑动到 VNESTPageThree
+//                if ("B".equals(userSelection) && position == 2) { // 第三个 Fragment 是 VNESTPageThree
+//                    isSwipeEnabled = false; // 禁用滑动
+//                    setViewPagerSwipeEnabled(viewPager, false);
+//                }
+//            }
+//        });
     }
 
     // ViewPager2 的适配器
@@ -112,15 +116,33 @@ public class MainActivity extends AppCompatActivity {
         // 通知适配器更新数据
         adapter.notifyItemChanged(3);
 
-        // 自动跳转到 VNESTPageFour
-        viewPager.setCurrentItem(3, true);
+    }
+    private void updateVNESTPageFour2(String subject, String object) {
+        // 创建一个新的 VNESTPageFour 实例，并传入参数
+        VNESTPageFour2 newFragment = VNESTPageFour2.newInstance(subject, object);
+
+        // 替换 Fragment 列表中的 VNESTPageFour
+        fragmentList.set(4, newFragment);
+
+        // 通知适配器更新数据
+        adapter.notifyItemChanged(4);
+    }
+    private void updateVNESTPageFour3(String subject, String object) {
+        // 创建一个新的 VNESTPageFour 实例，并传入参数
+        VNESTPageFour3 newFragment = VNESTPageFour3.newInstance(subject, object);
+
+        // 替换 Fragment 列表中的 VNESTPageFour
+        fragmentList.set(5, newFragment);
+
+        // 通知适配器更新数据
+        adapter.notifyItemChanged(5);
     }
 
-    // 禁用或启用 ViewPager2 滑动
-    private void setViewPagerSwipeEnabled(ViewPager2 viewPager, boolean enabled) {
-        RecyclerView recyclerView = (RecyclerView) viewPager.getChildAt(0);
-        if (recyclerView != null) {
-            recyclerView.setOnTouchListener((v, event) -> !enabled); // 返回 true 禁用滑动
-        }
-    }
+//    // 禁用或启用 ViewPager2 滑动
+//    private void setViewPagerSwipeEnabled(ViewPager2 viewPager, boolean enabled) {
+//        RecyclerView recyclerView = (RecyclerView) viewPager.getChildAt(0);
+//        if (recyclerView != null) {
+//            recyclerView.setOnTouchListener((v, event) -> !enabled); // 返回 true 禁用滑动
+//        }
+//    }
 }
