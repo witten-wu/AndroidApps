@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#88DDF7">
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alignmentMode="alignMargins"
+        android:columnCount="2"
+        android:padding="16dp"
+        android:rowCount="2"
+        android:useDefaultMargins="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.widget.Button
+            android:id="@+id/button1"
+            style="@style/ButtonTextStyle"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:background="@drawable/button_background"
+            android:text="聽字選圖" />
+
+        <android.widget.Button
+            android:id="@+id/button2"
+            style="@style/ButtonTextStyle"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:background="@drawable/button_background2"
+            android:text="被動句" />
+
+        <android.widget.Button
+            android:id="@+id/button3"
+            style="@style/ButtonTextStyle"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:background="@drawable/button_background3"
+            android:text="比較句" />
+
+        <android.widget.Button
+            android:id="@+id/button4"
+            style="@style/ButtonTextStyle"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:background="@drawable/button_background4"
+            android:text="情態詞" />
+
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,5 +27,20 @@ public class SelectionActivity extends AppCompatActivity {
             intent.putExtra("selection", "B"); // 传递选择结果
             startActivity(intent);
         });
+
+        // 选择 C 按钮
+        Button buttonC = findViewById(R.id.buttonC);
+        buttonC.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "C"); // 传递选择结果
+            startActivity(intent);
+        });
+
+        Button buttonD = findViewById(R.id.buttonD);
+        buttonD.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "D"); // 传递选择结果
+            startActivity(intent);
+        });
     }
 }

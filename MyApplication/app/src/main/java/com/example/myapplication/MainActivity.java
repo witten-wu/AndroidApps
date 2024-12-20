@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -17,21 +18,28 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter adapter;
     private List<Fragment> fragmentList = new ArrayList<>();
     private String userSelection; // 用户选择的 A 或 B
-    // private boolean isSwipeEnabled = true; // 是否允许滑动
+    private boolean isSwipeEnabled = true; // 是否允许滑动
+
+    private int[] images = {
+            R.drawable.item0, R.drawable.item1,
+            R.drawable.item2, R.drawable.item3,
+            R.drawable.item4, R.drawable.item5
+    };
+
+    private String[] Itemnames = {"茶几", "番茄", "出租车"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 获取用户的选择 ("A" 或 "B")
         userSelection = getIntent().getStringExtra("selection");
 
         // 根据用户选择动态设置屏幕方向
-        if ("B".equals(userSelection)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // 设置横屏
-        } else {
+        if ("A".equals(userSelection)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 设置竖屏
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // 设置横屏
         }
 
         // 初始化 ViewPager2
@@ -65,24 +73,40 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(new VNESTPageFive());
             fragmentList.add(new VNESTPageSix());
             fragmentList.add(new VNESTPageSeven());
+        } else if ("C".equals(userSelection)) {
+            fragmentList.add(new RabStorPageOne());
+        } else if ("D".equals(userSelection)) {
+            fragmentList.add(new LanSdyPageOne(new LanSdyPageOne.SelectionCallback() {
+                @Override
+                public void onSelect(String option) {
+                    updateLanSdyPageOption1(option);
+//                    isSwipeEnabled = true;
+//                    setViewPagerSwipeEnabled(viewPager, true);
+                    viewPager.setCurrentItem(1, true);
+                }
+            }));
+            fragmentList.add(new LanSdyPageOption1());
+            fragmentList.add(new LanSdyPageOption1_1());
+            fragmentList.add(new LanSdyPageOption1_2());
+            fragmentList.add(new LanSdyPageOption1_3());
+            fragmentList.add(new LanSdyPageOption1_4());
+            fragmentList.add(LanSdyPageOption1_5.newInstance(images, 0, Itemnames));
         }
 
         // 设置适配器
         adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
 
-//        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                super.onPageSelected(position);
-//
-//                // 检测是否滑动到 VNESTPageThree
-//                if ("B".equals(userSelection) && position == 2) { // 第三个 Fragment 是 VNESTPageThree
-//                    isSwipeEnabled = false; // 禁用滑动
-//                    setViewPagerSwipeEnabled(viewPager, false);
-//                }
-//            }
-//        });
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if ("D".equals(userSelection) && position == 0) {
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                }
+            }
+        });
     }
 
     // ViewPager2 的适配器
@@ -138,11 +162,38 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyItemChanged(5);
     }
 
-//    // 禁用或启用 ViewPager2 滑动
-//    private void setViewPagerSwipeEnabled(ViewPager2 viewPager, boolean enabled) {
-//        RecyclerView recyclerView = (RecyclerView) viewPager.getChildAt(0);
-//        if (recyclerView != null) {
-//            recyclerView.setOnTouchListener((v, event) -> !enabled); // 返回 true 禁用滑动
-//        }
-//    }
+    private void updateLanSdyPageOption1(String option) {
+        // 创建一个新的 VNESTPageFour 实例，并传入参数
+        LanSdyPageOption1 newFragment = LanSdyPageOption1.newInstance(option);
+
+        // 替换 Fragment 列表中的 LanSdyPageOne
+        fragmentList.set(1, newFragment);
+
+        // 通知适配器更新数据
+        adapter.notifyItemChanged(1);
+
+    }
+
+    public void updateLanSdyPageOption1_5(int[] images, int index, String[] itemnames) {
+        // 创建一个新的 LanSdyPageOption1_5 实例
+        LanSdyPageOption1_5 newFragment = LanSdyPageOption1_5.newInstance(images, index, itemnames);
+
+        // 替换 Fragment 列表中的 LanSdyPageOption1_5
+        fragmentList.set(6, newFragment);
+
+        //强制销毁和重建
+        adapter = new ViewPagerAdapter(this, fragmentList);
+        viewPager.setAdapter(adapter);
+
+        // 切换到 LanSdyPageOption1_5
+        viewPager.setCurrentItem(6, false);
+    }
+
+    // 禁用或启用 ViewPager2 滑动
+    private void setViewPagerSwipeEnabled(ViewPager2 viewPager, boolean enabled) {
+        RecyclerView recyclerView = (RecyclerView) viewPager.getChildAt(0);
+        if (recyclerView != null) {
+            recyclerView.setOnTouchListener((v, event) -> !enabled); //
+        }
+    }
 }
