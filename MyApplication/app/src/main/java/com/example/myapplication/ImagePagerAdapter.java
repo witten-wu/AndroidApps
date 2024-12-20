@@ -24,7 +24,14 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerAdapter.Im
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // 加载单个页面的布局文件
         View view = LayoutInflater.from(context).inflate(R.layout.rs_image_item, parent, false);
-        return new ImageViewHolder(view);
+        if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER); // 设置缩放类型
+            return new ImageViewHolder(imageView);
+        }else {
+            throw new IllegalStateException("Root view of rs_image_item must be an ImageView.");
+        }
+//        return new ImageViewHolder(view);
     }
 
     @Override

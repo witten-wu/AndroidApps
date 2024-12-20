@@ -16,7 +16,9 @@ public class RabStorPageOne extends Fragment {
     private final int[] images = {
             R.drawable.rbs_1, R.drawable.rbs_2, R.drawable.rbs_3,
             R.drawable.rbs_4, R.drawable.rbs_5, R.drawable.rbs_6,
-            R.drawable.rbs_7, R.drawable.rbs_8
+            R.drawable.rbs_7, R.drawable.rbs_8, R.drawable.rbs_9,
+            R.drawable.rbs_10, R.drawable.rbs_11, R.drawable.rbs_12,
+            R.drawable.rbs_13, R.drawable.rbs_14, R.drawable.rbs_15
     };
 
     @Nullable
@@ -48,6 +50,5 @@ public class RabStorPageOne extends Fragment {
 
             return false; // 返回 false 以允许其他事件（如滑动）继续处理
         });
-
     }
 }

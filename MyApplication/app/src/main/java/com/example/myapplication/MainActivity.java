@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         // 根据用户选择动态设置屏幕方向
         if ("A".equals(userSelection)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 设置竖屏
+        } else if ("C".equals(userSelection)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 设置竖屏
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // 设置横屏
         }
