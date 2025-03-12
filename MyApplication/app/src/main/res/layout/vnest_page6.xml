@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <LinearLayout
+        android:id="@+id/boxContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     <TextView
         android:id="@+id/boxPush"
@@ -18,34 +28,25 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:visibility="invisible"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:id="@+id/questionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="刚才讨论的动作叫什么？"
         android:textColor="#FF6750A4"
         android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/boxPush"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginBottom="10dp"/>
 
     <!-- 点击显示按钮 -->
     <Button
         android:id="@+id/showButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="显示答案"
-        app:layout_constraintTop_toBottomOf="@id/questionText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="显示答案" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

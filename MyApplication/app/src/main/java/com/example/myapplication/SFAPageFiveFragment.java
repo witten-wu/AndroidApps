@@ -140,7 +140,7 @@ public class SFAPageFiveFragment extends Fragment {
         questionText.setText(question.text);
         questionText.setTextSize(16);
         questionText.setTextColor(Color.BLACK);
-        questionText.setGravity(Gravity.CENTER_VERTICAL); // 垂直居中
+        questionText.setGravity(Gravity.CENTER); // 垂直居中
         questionText.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 3)); // 使用权重分配空间
         questionLayout.addView(questionText);

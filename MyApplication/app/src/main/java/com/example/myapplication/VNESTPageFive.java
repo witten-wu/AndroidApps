@@ -121,7 +121,7 @@ public class VNESTPageFive extends Fragment {
         LinearLayout questionLayout = new LinearLayout(getContext());
         questionLayout.setOrientation(LinearLayout.HORIZONTAL); // 水平排列
         questionLayout.setGravity(Gravity.CENTER_HORIZONTAL); // 整体居中对齐
-        questionLayout.setPadding(8, 8, 8, 8);
+        questionLayout.setPadding(8, 16, 8, 16);
         // 动态生成正确答案的 ID
         int correctAnswerId = generateUniqueId();
 
@@ -131,12 +131,13 @@ public class VNESTPageFive extends Fragment {
         // 添加问题文本
         TextView questionText = new TextView(getContext());
         questionText.setText(question.text);
-        questionText.setTextSize(16);
+        questionText.setTextSize(24);
         questionText.setTextColor(Color.BLACK);
         questionText.setGravity(Gravity.CENTER_VERTICAL); // 垂直居中
         LinearLayout.LayoutParams questionTextParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //questionTextParams.setMarginEnd(32); // 设置右边距，避免文本和选项过于靠近
+        questionTextParams.setMarginEnd(32); // 设置右边距，避免文本和选项过于靠近
+        questionTextParams.gravity = Gravity.CENTER_VERTICAL; // 确保垂直居中
         questionText.setLayoutParams(questionTextParams);
         questionLayout.addView(questionText);
 
@@ -145,12 +146,14 @@ public class VNESTPageFive extends Fragment {
         radioGroup.setOrientation(RadioGroup.HORIZONTAL); // 水平排列选项
         LinearLayout.LayoutParams radioGroupParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        radioGroupParams.gravity = Gravity.CENTER_VERTICAL; // 确保垂直居中
         radioGroup.setLayoutParams(radioGroupParams);
 
         // 创建选项 A
         RadioButton buttonA = new RadioButton(getContext());
         buttonA.setText("正确");
-        buttonA.setGravity(Gravity.CENTER);
+        buttonA.setTextSize(24);
+        buttonA.setGravity(Gravity.CENTER_VERTICAL);
         buttonA.setPadding(8, 8, 8, 8); // 设置选项的内边距
         if (question.correctAnswer) { // 如果 A 是正确答案
             buttonA.setId(correctAnswerId);
@@ -162,7 +165,8 @@ public class VNESTPageFive extends Fragment {
         // 创建选项 B
         RadioButton buttonB = new RadioButton(getContext());
         buttonB.setText("错误");
-        buttonB.setGravity(Gravity.CENTER);
+        buttonB.setTextSize(24);
+        buttonB.setGravity(Gravity.CENTER_VERTICAL);
         buttonB.setPadding(8, 8, 8, 8); // 设置选项的内边距
         if (!question.correctAnswer) { // 如果 B 是正确答案
             buttonB.setId(correctAnswerId);
@@ -177,7 +181,7 @@ public class VNESTPageFive extends Fragment {
         // 添加问题布局到容器
         LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        containerParams.setMargins(8, 8, 8, 8); // 间距调整
+        containerParams.setMargins(8, 16, 8, 16); // 间距调整
         questionLayout.setLayoutParams(containerParams);
 
         questionsContainer.addView(questionLayout);

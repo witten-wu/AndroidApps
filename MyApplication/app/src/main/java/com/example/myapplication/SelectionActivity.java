@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +41,20 @@ public class SelectionActivity extends AppCompatActivity {
         buttonD.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "D"); // 传递选择结果
+            startActivity(intent);
+        });
+
+        Button buttonLogout = findViewById(R.id.logoutButton);
+        buttonLogout.setOnClickListener(v -> {
+            // 清除登录状态
+            SharedPreferences preferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("is_logged_in", false);
+            editor.apply();
+
+            // 返回登录界面
+            Intent intent = new Intent(SelectionActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
     }

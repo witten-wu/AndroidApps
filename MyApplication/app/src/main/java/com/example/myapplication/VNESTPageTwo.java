@@ -406,54 +406,23 @@ public class VNESTPageTwo extends Fragment {
 //    }
 
     private float[] getCheckBoxCenterCoordinates(CheckBox checkBox) {
-        // 获取 CheckBox 的屏幕位置
-        int[] location = new int[2];
-        checkBox.getLocationOnScreen(location);
+        // 获取 CheckBox 在窗口中的位置
+        int[] locationInWindow = new int[2];
+        checkBox.getLocationInWindow(locationInWindow);
 
-        // 状态栏
-        int statusBarHeight = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-        }
+        // 获取 LineView 在窗口中的位置
+        int[] lineViewLocationInWindow = new int[2];
+        lineView.getLocationInWindow(lineViewLocationInWindow);
 
-        // 计算 CheckBox 的中心位置
-        float centerX = location[0] + checkBox.getWidth() / 2f;
-        float centerY = location[1] + checkBox.getHeight() / 2f;
+        // 计算 CheckBox 相对于 LineView 的位置
+        float relativeX = locationInWindow[0] - lineViewLocationInWindow[0] + checkBox.getWidth() / 2f;
+        float relativeY = locationInWindow[1] - lineViewLocationInWindow[1] + checkBox.getHeight() / 2f;
 
-        // 修正纵向中心
-        float NewcenterY = centerY - statusBarHeight;
-        float NewcenterX = centerX - statusBarHeight;
+        // 如果需要调试，可以输出坐标信息
+        // Log.d("Coordinates", "CheckBox at: " + relativeX + ", " + relativeY);
 
-        return new float[]{NewcenterX, NewcenterY};
+        return new float[]{relativeX, relativeY};
     }
-//    private float[] getTextSideCoordinates(TextView textView, boolean isLeftSide) {
-//        // 获取 TextView 的屏幕位置
-//        int[] location = new int[2];
-//        textView.getLocationOnScreen(location);
-//
-//        // 状态栏
-//        int statusBarHeight = 0;
-//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-//        }
-//
-//        // 修正纵向中心
-//        float textCenterY = location[1] - statusBarHeight;
-//
-//        // 修正横向中心
-//        float textCenterX = location[0];
-//
-//        // 根据是否为左侧或右侧返回不同的横坐标
-//        if (isLeftSide) {
-//            // 左侧坐标
-//            return new float[]{textCenterX, textCenterY};
-//        } else {
-//            // 右侧坐标
-//            return new float[]{textCenterX + textView.getWidth(), textCenterY};
-//        }
-//    }
 
     private void setupClearButton(Button clearButton, List<View> checkbox1Options, List<View> checkbox3Options) {
         clearButton.setOnClickListener(v -> {
