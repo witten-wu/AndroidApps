@@ -1,12 +1,9 @@
 package com.example.myapplication;
 
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 public class LanSdyPageOption1_5 extends Fragment {
 
@@ -45,8 +41,10 @@ public class LanSdyPageOption1_5 extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.ls_option1_5, container, false);
 
-        ImageView imageLeft = view.findViewById(R.id.imageLeft);
-        ImageView imageRight = view.findViewById(R.id.imageRight);
+        ImageView image1 = view.findViewById(R.id.image1);
+        ImageView image2 = view.findViewById(R.id.image2);
+        ImageView image3 = view.findViewById(R.id.image3);
+        ImageView image4 = view.findViewById(R.id.image4);
         TextView tvProgress = view.findViewById(R.id.tvProgress);
         TextView tvTitle = view.findViewById(R.id.tvTitle);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
@@ -57,37 +55,60 @@ public class LanSdyPageOption1_5 extends Fragment {
             currentIndex = args.getInt(ARG_INDEX);
             itemnames = args.getStringArray(ARG_ITEMNAMES);
 
-            // 设置图片
-            if (images != null && currentIndex < images.length - 1) {
-                imageLeft.setImageResource(images[currentIndex]);
-                imageRight.setImageResource(images[currentIndex + 1]);
+            if (images != null && currentIndex < images.length) {
+                // 第一张图片总是可以显示
+                image1.setImageResource(images[currentIndex]);
 
-                if (itemnames != null && currentIndex / 2 < itemnames.length) {
-                    tvTitle.setText(itemnames[currentIndex / 2]);
+                // 检查并设置第二张图片
+                if (currentIndex + 1 < images.length) {
+                    image2.setImageResource(images[currentIndex + 1]);
+                    image2.setVisibility(View.VISIBLE);
+                } else {
+                    image2.setVisibility(View.INVISIBLE);
                 }
 
-                // 设置进度条
-                int progress = currentIndex / 2 + 1;
-                progressBar.setMax(images.length / 2);
-                progressBar.setProgress(progress);
-                tvProgress.setText(progress + " / " + (images.length / 2));
+                // 检查并设置第三张图片
+                if (currentIndex + 2 < images.length) {
+                    image3.setImageResource(images[currentIndex + 2]);
+                    image3.setVisibility(View.VISIBLE);
+                } else {
+                    image3.setVisibility(View.INVISIBLE);
+                }
+
+                // 检查并设置第四张图片
+                if (currentIndex + 3 < images.length) {
+                    image4.setImageResource(images[currentIndex + 3]);
+                    image4.setVisibility(View.VISIBLE);
+                } else {
+                    image4.setVisibility(View.INVISIBLE);
+                }
+
+                // 设置标题和进度（与前面相同）
+                if (itemnames != null && currentIndex / 4 < itemnames.length) {
+                    tvTitle.setText(itemnames[currentIndex / 4]);
+                }
+
+                int totalGroups = (int) Math.ceil(images.length / 4.0);
+                int currentGroup = (currentIndex / 4) + 1;
+                progressBar.setMax(totalGroups);
+                progressBar.setProgress(currentGroup);
+                tvProgress.setText(currentGroup + " / " + totalGroups);
             }
         }
 
-        // 左侧图片点击事件
-        imageLeft.setOnClickListener(v -> loadNextPage());
-
-        // 右侧图片点击事件
-        imageRight.setOnClickListener(v -> loadNextPage());
+        image1.setOnClickListener(v -> loadNextPage());
+        image2.setOnClickListener(v -> loadNextPage());
+        image3.setOnClickListener(v -> loadNextPage());
+        image4.setOnClickListener(v -> loadNextPage());
 
         return view;
     }
 
     // 加载下一组图片
     private void loadNextPage() {
-        if (images != null && currentIndex + 2 < images.length) {
+        if (images != null && currentIndex + 4 < images.length) {
             // 替换当前 Fragment，加载下一组图片
-            ((MainActivity) requireActivity()).updateLanSdyPageOption1_5(images, currentIndex + 2, itemnames);
+            ((MainActivity) requireActivity()).updateLanSdyPageOption1_5(images, currentIndex + 4, itemnames);
         }
     }
 }

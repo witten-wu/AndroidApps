@@ -15,18 +15,20 @@ import androidx.viewpager2.widget.ViewPager2;
 
 public class LanSdyPageOption1_2 extends Fragment {
 
+    private AudioManager audioManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        audioManager = new AudioManager(this, R.raw.g1ainst_02, 3);
+
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.ls_option1_2, container, false);
 
-        ImageView imageWatermelon = view.findViewById(R.id.imageWatermelon);
-        ImageView imageSnail = view.findViewById(R.id.imageSnail);
-
-        // 设置置灰效果
-        setImageGray(imageWatermelon);
-        setImageGray(imageSnail);
 
         ViewPager2 viewPager = requireActivity().findViewById(R.id.viewPager);
         Button nextbutton = view.findViewById(R.id.btnNext);
@@ -42,10 +44,4 @@ public class LanSdyPageOption1_2 extends Fragment {
         return view;
     }
 
-    private void setImageGray(ImageView imageView) {
-        ColorMatrix colorMatrix = new ColorMatrix();
-        colorMatrix.setSaturation(0); // 设置饱和度为 0（灰色）
-        ColorMatrixColorFilter colorFilter = new ColorMatrixColorFilter(colorMatrix);
-        imageView.setColorFilter(colorFilter); // 应用颜色过滤器
-    }
 }

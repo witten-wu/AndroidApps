@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,13 +19,13 @@ public class MainActivity extends AppCompatActivity {
     private String userSelection; // 用户选择的 A 或 B
     private boolean isSwipeEnabled = true; // 是否允许滑动
 
-    private int[] images = {
-            R.drawable.item0, R.drawable.item1,
-            R.drawable.item2, R.drawable.item3,
-            R.drawable.item4, R.drawable.item5
+    private int[] G1Aimages = {
+            R.drawable.g1aitem0, R.drawable.g1aitem1, R.drawable.g1aitem2, R.drawable.g1aitem3,
+            R.drawable.g1aitem4, R.drawable.g1aitem5, R.drawable.g1aitem6, R.drawable.g1aitem7,
+            R.drawable.g1aitem8, R.drawable.g1aitem9, R.drawable.g1aitem10, R.drawable.g1aitem11
     };
 
-    private String[] Itemnames = {"茶几", "番茄", "出租车"};
+    private String[] G1AItemnames = {"菠蘿", "番茄", "巴士"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(new LanSdyPageOption1_1());
             fragmentList.add(new LanSdyPageOption1_2());
             fragmentList.add(new LanSdyPageOption1_3());
+            fragmentList.add(new LanSdyPageOption1_3_1());
+            fragmentList.add(new LanSdyPageOption1_3_2());
+            fragmentList.add(new LanSdyPageOption1_3_3());
             fragmentList.add(new LanSdyPageOption1_4());
-            fragmentList.add(LanSdyPageOption1_5.newInstance(images, 0, Itemnames));
+            fragmentList.add(LanSdyPageOption1_5.newInstance(G1Aimages, 0, G1AItemnames));
         }
 
         // 设置适配器
@@ -183,14 +185,14 @@ public class MainActivity extends AppCompatActivity {
         LanSdyPageOption1_5 newFragment = LanSdyPageOption1_5.newInstance(images, index, itemnames);
 
         // 替换 Fragment 列表中的 LanSdyPageOption1_5
-        fragmentList.set(6, newFragment);
+        fragmentList.set(9, newFragment);
 
         //强制销毁和重建
         adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
 
         // 切换到 LanSdyPageOption1_5
-        viewPager.setCurrentItem(6, false);
+        viewPager.setCurrentItem(9, false);
     }
 
     // 禁用或启用 ViewPager2 滑动

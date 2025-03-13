@@ -33,30 +33,28 @@ public class LanSdyPageOne extends Fragment {
             }
         });
 
-        //暂时禁用
-//        // 选择 2 按钮
-//        Button button2 = view.findViewById(R.id.button2);
-//        button2.setOnClickListener(v -> {
-//            if (callback != null) {
-//                callback.onSelect("被動句");
-//            }
-//        });
-//
-//        // 选择 3 按钮
-//        Button button3 = view.findViewById(R.id.button3);
-//        button3.setOnClickListener(v -> {
-//            if (callback != null) {
-//                callback.onSelect("比較句");
-//            }
-//        });
-//
-//        // 选择 4 按钮
-//        Button button4 = view.findViewById(R.id.button4);
-//        button4.setOnClickListener(v -> {
-//            if (callback != null) {
-//                callback.onSelect("情態詞");
-//            }
-//        });
+        Button button2 = view.findViewById(R.id.button2);
+        button2.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onSelect("被動句");
+            }
+        });
+
+        // 选择 3 按钮
+        Button button3 = view.findViewById(R.id.button3);
+        button3.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onSelect("比較句");
+            }
+        });
+
+        // 选择 4 按钮
+        Button button4 = view.findViewById(R.id.button4);
+        button4.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onSelect("情態詞");
+            }
+        });
 
         return view;
     }

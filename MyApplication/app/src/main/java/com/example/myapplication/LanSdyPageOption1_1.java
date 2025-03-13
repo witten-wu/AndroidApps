@@ -1,4 +1,5 @@
 package com.example.myapplication;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +13,20 @@ import android.widget.Button;
 
 public class LanSdyPageOption1_1 extends Fragment {
 
+    private AudioManager audioManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        audioManager = new AudioManager(this, R.raw.g1ainst_01, 2);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.ls_option1_1, container, false);
+        View view = inflater.inflate(R.layout.ls_option1_1, container, false);
 
         ViewPager2 viewPager = requireActivity().findViewById(R.id.viewPager);
         Button nextButton = view.findViewById(R.id.btnNext);
@@ -26,4 +36,5 @@ public class LanSdyPageOption1_1 extends Fragment {
 
         return view;
     }
+
 }

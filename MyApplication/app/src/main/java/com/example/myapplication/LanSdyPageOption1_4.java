@@ -16,6 +16,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 public class LanSdyPageOption1_4 extends Fragment {
 
+    private AudioManager audioManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        audioManager = new AudioManager(this, R.raw.g1ainst_final, 8);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,7 +35,7 @@ public class LanSdyPageOption1_4 extends Fragment {
 
         Button previousbutton = view.findViewById(R.id.btnStart);
         previousbutton.setOnClickListener(v -> {
-            viewPager.setCurrentItem(6, true);
+            viewPager.setCurrentItem(9, true);
         });
 
         return view;

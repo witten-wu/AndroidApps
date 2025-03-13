@@ -9,29 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/g1ainst_02"
+        android:src="@drawable/g1ainst_04"
         android:contentDescription="背景图片" />
-
-    <!-- 上一页按钮 -->
-    <android.widget.Button
-        android:id="@+id/btnPrevious"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/button_background"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="上一頁"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
 
     <android.widget.Button
         android:id="@+id/btnNext"
@@ -41,12 +20,12 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_background4"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:text="下一頁"
+        android:text="開始"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
