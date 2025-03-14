@@ -1,0 +1,124 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#88DDF7">
+
+    <!-- 顶部功能按钮和词条 -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- 关闭按钮 -->
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="#88DDF7"
+            android:padding="10dp"
+            android:src="@drawable/close" />
+
+        <!-- 占位符 -->
+        <View
+            android:layout_width="120dp"
+            android:layout_height="100dp" />
+
+        <!-- 播放按钮 -->
+        <ImageView
+            android:id="@+id/btnPlay"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="#88DDF7"
+            android:padding="10dp"
+            android:src="@drawable/voice" />
+
+        <!-- 占位符 -->
+        <View
+            android:layout_width="16dp"
+            android:layout_height="100dp" />
+
+        <!-- 词条标题 -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="有人話：「你一定要攞三角形」。又有人話：「你或者要攞圓形」。咁你要攞咩形狀呢？"
+            android:textColor="#333333"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 图片区域 -->
+    <LinearLayout
+        android:id="@+id/imageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+            <!-- 图片 1 -->
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_margin="16dp"
+                android:background="@color/white"
+                android:src="@drawable/g2cinst_d101"
+                android:scaleType="fitCenter" />
+
+            <!-- 图片 2 -->
+            <ImageView
+                android:id="@+id/image2"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_margin="16dp"
+                android:background="@color/white"
+                android:src="@drawable/g2cinst_d102"
+                android:scaleType="fitCenter" />
+
+    </LinearLayout>
+
+    <!-- 进度条 -->
+    <LinearLayout
+        android:id="@+id/progressBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- 进度条 -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:max="2"
+            android:progress="1"
+            android:progressDrawable="@drawable/progress_custom" />
+
+        <!-- 进度文本 -->
+        <TextView
+            android:id="@+id/tvProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:text="1 / 2"
+            android:textColor="#333333"
+            android:textSize="16sp" />
+    </LinearLayout>
+</RelativeLayout>

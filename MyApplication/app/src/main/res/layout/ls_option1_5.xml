@@ -65,19 +65,13 @@
         android:layout_below="@id/topBar"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+        android:orientation="horizontal">
 
             <!-- 图片 1 -->
             <ImageView
                 android:id="@+id/image1"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:layout_margin="16dp"
                 android:background="@color/white"
                 android:scaleType="fitCenter" />
@@ -85,38 +79,11 @@
             <!-- 图片 2 -->
             <ImageView
                 android:id="@+id/image2"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:layout_margin="16dp"
                 android:background="@color/white"
                 android:scaleType="fitCenter" />
-        </LinearLayout>
-
-        <!-- 第二行图片 -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <!-- 图片 3 -->
-            <ImageView
-                android:id="@+id/image3"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_margin="16dp"
-                android:background="@color/white"
-                android:scaleType="fitCenter" />
-
-            <!-- 图片 4 -->
-            <ImageView
-                android:id="@+id/image4"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_margin="16dp"
-                android:background="@color/white"
-                android:scaleType="fitCenter" />
-        </LinearLayout>
     </LinearLayout>
 
     <!-- 进度条 -->

@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="16dp"
                     android:max="100"
-                    android:progress="10"
+                    android:progress="100"
                     android:progressDrawable="@drawable/progress_custom" />
 
                 <!-- 进度文字 -->
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginTop="4dp"
-                    android:text="3/30"
+                    android:text="30/30"
                     android:textColor="#FF8C00"
                     android:textSize="16sp" />
             </LinearLayout>
