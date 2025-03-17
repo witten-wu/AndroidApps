@@ -39,4 +39,9 @@
 
     </application>
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <!-- 其他应用组件 -->
+
 </manifest>
