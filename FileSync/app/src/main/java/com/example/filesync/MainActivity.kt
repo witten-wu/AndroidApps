@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.File
+import androidx.work.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         subject001Btn.setOnClickListener {
             checkAndRequestPermission("001")
         }
+
+        scheduleAutoUploadWork()
     }
 
     private fun checkAndRequestPermission(subjectId: String) {
@@ -123,5 +127,34 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.start()
+    }
+
+    private fun scheduleAutoUploadWork() {
+//        val constraints = Constraints.Builder()
+//            .setRequiredNetworkType(NetworkType.UNMETERED) // Wi-Fi 环境
+//            .setRequiresCharging(true) // 充电时执行
+//            .build()
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED) // Wi-Fi 环境
+            .build()
+
+//        val uploadWork = PeriodicWorkRequestBuilder<AutoUploadWorker>(
+//            3, TimeUnit.HOURS // 每3小时上传一次
+//        )
+//            .setConstraints(constraints)
+//            .build()
+
+        val uploadWork = PeriodicWorkRequestBuilder<AutoUploadWorker>(
+            15, TimeUnit.MINUTES // 最短只能是15分钟
+        )   .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "auto_upload_work",
+                ExistingPeriodicWorkPolicy.KEEP,
+                uploadWork
+            )
     }
 }
