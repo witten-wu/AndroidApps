@@ -10,13 +10,34 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
+
+    <Button
+        android:id="@+id/buttonE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Naming Screener - Noun"
+        android:layout_gravity="center"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/buttonF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Naming Screener - Verb"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/buttonE"/>
+
     <Button
         android:id="@+id/buttonA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SFA"
         android:layout_gravity="center"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/buttonF"/>
 
     <Button
         android:id="@+id/buttonB"
@@ -46,7 +67,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonB" />
+        app:layout_constraintTop_toBottomOf="@id/buttonC" />
 
     <Button
         android:id="@+id/logoutButton"

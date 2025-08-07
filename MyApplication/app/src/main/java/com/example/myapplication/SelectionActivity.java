@@ -44,6 +44,20 @@ public class SelectionActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button buttonE = findViewById(R.id.buttonE);
+        buttonE.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "E"); // 传递选择结果
+            startActivity(intent);
+        });
+
+        Button buttonF = findViewById(R.id.buttonF);
+        buttonF.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "F"); // 传递选择结果
+            startActivity(intent);
+        });
+
         Button buttonLogout = findViewById(R.id.logoutButton);
         buttonLogout.setOnClickListener(v -> {
             // 清除登录状态

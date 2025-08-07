@@ -124,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(1, true);
                 }
             }));
+        } else if ("E".equals(userSelection)) {
+            fragmentList.add(new NameScreenPageOne());
+        } else if ("F".equals(userSelection)) {
+            fragmentList.add(new NameScreenPageTwo());
         }
 
         // 设置适配器

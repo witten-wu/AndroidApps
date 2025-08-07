@@ -48,7 +48,7 @@ public class RabStorPageOne extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        audioFilePath = requireContext().getExternalFilesDir(null).getAbsolutePath() + "/recording.3gp";
+        audioFilePath = requireContext().getExternalFilesDir(null).getAbsolutePath() + "/RSrecording.3gp";
 
         // 找到 ViewPager2
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
