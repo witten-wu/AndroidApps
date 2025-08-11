@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,100 +8,33 @@
     android:background="#FFFFFF">
 
     <ImageView
-        android:id="@+id/tigerImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/mainImage"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:contentDescription="A sample picture"
-        android:scaleType="centerCrop"
-        android:src="@drawable/tiger"
-        android:layout_marginTop="10dp"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.gridlayout.widget.GridLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/featuresContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:columnCount="3"
-        app:rowCount="2"
-        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="5dp"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start"
+        app:alignItems="flex_start"
+        app:flexDirection="row"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tigerImage"
-        app:useDefaultMargins="true">
+        app:layout_constraintTop_toBottomOf="@id/mainImage">
+    </com.google.android.flexbox.FlexboxLayout>
 
-        <!-- 特性1 -->
-        <TextView
-            android:id="@+id/feature1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF6750A4"
-            android:elevation="3dp"
-            android:gravity="center"
-            android:padding="3dp"
-            android:tag="true"
-            android:text="是一种动物"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <!-- 特性5 -->
-        <TextView
-            android:id="@+id/feature5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF6750A4"
-            android:elevation="3dp"
-            android:gravity="center"
-            android:padding="3dp"
-            android:tag="true"
-            android:text="是捕食者"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <!-- 特性8 -->
-        <TextView
-            android:id="@+id/feature8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF6750A4"
-            android:elevation="3dp"
-            android:gravity="center"
-            android:padding="3dp"
-            android:tag="true"
-            android:text="动作迅速的"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <!-- 特性9 -->
-        <TextView
-            android:id="@+id/feature9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF6750A4"
-            android:elevation="3dp"
-            android:gravity="center"
-            android:padding="3dp"
-            android:tag="true"
-            android:text="可以吃人"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <!-- 特性10 -->
-        <TextView
-            android:id="@+id/feature10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF6750A4"
-            android:elevation="3dp"
-            android:gravity="center"
-            android:padding="3dp"
-            android:tag="true"
-            android:text="食肉的"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-    </androidx.gridlayout.widget.GridLayout>
 
     <!-- 5 个分类框 -->
     <LinearLayout
@@ -109,7 +43,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/tigerImage"
+        app:layout_constraintTop_toBottomOf="@id/mainImage"
         android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

@@ -111,7 +111,7 @@ public class NameScreenPageOne extends Fragment {
     }
 
     private boolean isImageFile(String fileName) {
-        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp"};
+        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".gif"};
         String lowerFileName = fileName.toLowerCase();
         for (String ext : imageExtensions) {
             if (lowerFileName.endsWith(ext)) {

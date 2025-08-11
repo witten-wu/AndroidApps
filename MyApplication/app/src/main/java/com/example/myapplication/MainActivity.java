@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -9,8 +11,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.text.InputType;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private String userSelection;
     private boolean fragmentsAdded = false; //
     private boolean isSwipeEnabled = true; // 是否允许滑动
+
+    private List<String> imageNames;
 
     private int[] G1Aimages = {
             R.drawable.g1aitem0, R.drawable.g1aitem1,
@@ -78,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         if ("A".equals(userSelection)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 竖屏
+            showImageNameInputDialog();
+            return; // 暂时不继续执行，等待用户输入
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // 其它情况保持横屏
         }
@@ -85,15 +102,7 @@ public class MainActivity extends AppCompatActivity {
         // 初始化 ViewPager2
         viewPager = findViewById(R.id.viewPager);
 
-        if ("A".equals(userSelection)) {
-            fragmentList.add(new SFAPageOneFragment());
-            fragmentList.add(new SFAPageTwoFragment());
-            fragmentList.add(new SFAPageThreeFragment());
-            fragmentList.add(new SFAPageFourFragment());
-            fragmentList.add(new SFAPageFiveFragment());
-            fragmentList.add(new SFAPageSixFragment());
-            fragmentList.add(new SFAPageSevenFragment());
-        } else if ("B".equals(userSelection)) {
+        if ("B".equals(userSelection)) {
             fragmentList.add(new VNESTPageOne());
             fragmentList.add(new VNESTPageTwo());
             fragmentList.add(new VNESTPageThree(new VNESTPageThree.SelectionCallback() {
@@ -144,6 +153,162 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showImageNameInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("请输入要显示的名词(英文)，多个名词用空格分隔：");
+
+        // 创建输入框
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("例如：tiger box car sun");
+        builder.setView(input);
+
+        builder.setPositiveButton("确定", null); // 设置为null，稍后手动处理
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                finish(); // 取消则退出Activity
+            }
+        });
+
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish(); // 返回键也退出Activity
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+
+        // 手动处理确定按钮点击事件
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String inputText = input.getText().toString().trim();
+                        if (inputText.isEmpty()) {
+                            // 输入为空，显示提示但不关闭对话框
+                            Toast.makeText(MainActivity.this, "输入不能为空", Toast.LENGTH_SHORT).show();
+                            input.requestFocus(); // 重新获取焦点
+                            return;
+                        }
+
+                        // 按空格分割输入的图片名称
+                        String[] imageArray = inputText.split("\\s+");
+                        List<String> tempImageNames = new ArrayList<>();
+                        for (String imageName : imageArray) {
+                            if (!imageName.trim().isEmpty()) {
+                                tempImageNames.add(imageName.trim());
+                            }
+                        }
+
+                        // 验证文件夹是否存在
+                        List<String> missingFolders = validateImageFolders(tempImageNames);
+//                        if (!missingFolders.isEmpty()) {
+//                            // 有文件夹不存在，显示错误信息
+//                            String missingNames = String.join(", ", missingFolders);
+//                            String errorMessage = "以下名词在Noun目录下不存在：\n" + missingNames + "\n请检查输入";
+//
+//                            Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+//                            input.requestFocus(); // 重新获取焦点
+//                            return;
+//                        }
+                        if (!missingFolders.isEmpty()) {
+                            // 有文件夹不存在，显示错误信息
+                            String missingNames = String.join("\n• ", missingFolders);
+                            String errorMessage = "以下名词在Noun目录下不存在：\n\n• " + missingNames + "\n\n请检查输入是否正确";
+
+                            // 使用AlertDialog显示完整错误信息
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("输入验证错误")
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton("确定", (dialog, which) -> {
+                                        input.requestFocus(); // 重新获取焦点
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
+                            return;
+                        }
+
+                        // 所有验证通过，保存图片名称列表
+                        imageNames = tempImageNames;
+
+                        // 输入完成后初始化Fragment
+                        initializeAfterImageInput();
+                        dialog.dismiss(); // 手动关闭对话框
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
+
+    private List<String> validateImageFolders(List<String> imageNames) {
+        List<String> missingFolders = new ArrayList<>();
+
+        try {
+            // 获取assets/Noun目录下的所有文件夹
+            String[] nounFolders = getAssets().list("Noun");
+            if (nounFolders == null) {
+                // 如果Noun目录不存在，所有图片都标记为缺失
+                missingFolders.addAll(imageNames);
+                return missingFolders;
+            }
+
+            // 将现有文件夹转换为Set以便快速查找
+            Set<String> existingFolders = new HashSet<>();
+            for (String folder : nounFolders) {
+                existingFolders.add(folder.toLowerCase()); // 转为小写进行比较
+            }
+
+            // 检查每个输入的图片名称
+            for (String imageName : imageNames) {
+                if (!existingFolders.contains(imageName.toLowerCase())) {
+                    missingFolders.add(imageName);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 如果发生IO异常，标记所有图片为缺失
+            missingFolders.addAll(imageNames);
+        }
+
+        return missingFolders;
+    }
+
+    private void initializeAfterImageInput() {
+        // 初始化ViewPager2
+        viewPager = findViewById(R.id.viewPager);
+
+        // 创建SFA Fragment序列
+        createSFAFragments();
+
+        // 设置适配器
+        adapter = new ViewPagerAdapter(this, fragmentList);
+        viewPager.setAdapter(adapter);
+    }
+    private void createSFAFragments() {
+        fragmentList.clear(); // 清空现有的Fragment列表
+
+        for (String imageName : imageNames) {
+            // 为每张图片创建7个Fragment
+            fragmentList.add(SFAPageOneFragment.newInstance(imageName));
+            fragmentList.add(SFAPageTwoFragment.newInstance(imageName));
+            fragmentList.add(SFAPageThreeFragment.newInstance(new ArrayList<>(), imageName));
+            fragmentList.add(SFAPageFourFragment.newInstance(imageName));
+//            fragmentList.add(SFAPageFiveFragment.newInstance(imageName));
+            fragmentList.add(SFAPageSixFragment.newInstance(imageName));
+            fragmentList.add(SFAPageSevenFragment.newInstance(imageName));
+        }
     }
 
     // 根据选项添加不同的Fragment

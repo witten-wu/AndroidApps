@@ -21,22 +21,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SFAPageTwoFragment extends Fragment {
-
-    private androidx.gridlayout.widget.GridLayout featuresContainer;       // 特征条目容器
+    private static final String ARG_IMAGE_NAME = "image_name";
+    private String imageName;
+    private FlexboxLayout featuresContainer;       // 特征条目容器
     //private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
 
     private FlexboxLayout trashcanItemsContainer; // 垃圾桶条目容器
     private ImageView trashcanImage;             // 垃圾桶图片
+    private ImageView mainImage;
     private List<String> trashcanContents;       // 用于记录垃圾桶的内容
+    private List<Feature> selectedFeatures;
+    private List<String> correctFeaturesText;
 
-    // 正确的特性列表
-    private final List<String> correctFeatures = new ArrayList<String>() {{
-        add("是一种动物");
-        add("是捕食者");
-        add("食肉的");
-        add("动作迅速的");
-        add("可以吃人");
-    }};
+    public static SFAPageTwoFragment newInstance(String imageName) {
+        SFAPageTwoFragment fragment = new SFAPageTwoFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_IMAGE_NAME, imageName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            imageName = getArguments().getString(ARG_IMAGE_NAME);
+        }
+    }
 
     public SFAPageTwoFragment() {
         // Required empty public constructor
@@ -58,7 +69,10 @@ public class SFAPageTwoFragment extends Fragment {
         trashcanItemsContainer = view.findViewById(R.id.trashcanItemsContainer);
         trashcanImage = view.findViewById(R.id.trashcan);
         trashcanContents = new ArrayList<>();
+        mainImage = view.findViewById(R.id.mainImage);
         Button submitButton = view.findViewById(R.id.submitButton);
+
+        loadWordData();
 
         // 设置拖拽功能
         setupDragAndDrop();
@@ -68,21 +82,73 @@ public class SFAPageTwoFragment extends Fragment {
         });
     }
 
+    private void loadWordData() {
+        // 从CSV文件读取特征数据
+        String csvFileName = "treatment_organized.csv"; // 改为CSV文件
+        List<Feature> allFeatures = ExcelReader.getFeaturesForWord(getContext(), csvFileName, imageName);
+
+        // 选择8个正确特征和8个错误特征
+        selectedFeatures = ExcelReader.selectFeatures(allFeatures, 8, 8);
+
+        // 提取正确特征的文本用于后续验证
+        correctFeaturesText = new ArrayList<>();
+        for (Feature feature : selectedFeatures) {
+            if (feature.hasFeature()) {
+                correctFeaturesText.add(feature.getFeatureZh());
+            }
+        }
+
+        // 加载对应的图片
+        ImageUtils.loadImageFromAssets(getContext(), mainImage, imageName);
+
+        // 动态生成特征条目
+        generateFeatureItems();
+    }
+
+    private void generateFeatureItems() {
+        // 清空现有的特征条目
+        featuresContainer.removeAllViews();
+
+        // 动态创建TextView并添加到容器中
+        for (Feature feature : selectedFeatures) {
+            TextView featureView = createFeatureTextView(feature.getFeatureZh());
+
+            // 使用FlexboxLayout.LayoutParams
+            com.google.android.flexbox.FlexboxLayout.LayoutParams params =
+                    new com.google.android.flexbox.FlexboxLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+            params.setMargins(6, 6, 6, 6);
+
+            featuresContainer.addView(featureView, params);
+        }
+    }
+
+    private TextView createFeatureTextView(String text) {
+        TextView textView = new TextView(getContext());
+        textView.setText(text);
+        textView.setTextSize(23); // 稍微调小字体
+        textView.setPadding(3, 3, 3, 3); // 调整内边距
+        textView.setTextColor(android.graphics.Color.WHITE);
+        textView.setGravity(Gravity.CENTER);
+        textView.setMaxLines(4); // 限制最大行数
+        textView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+        // 设置圆角背景
+        android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+        drawable.setColor(android.graphics.Color.parseColor("#FF6750A4"));
+        drawable.setCornerRadius(8);
+        textView.setBackground(drawable);
+
+        return textView;
+    }
+
+
     @SuppressLint("ClickableViewAccessibility")
     private void setupDragAndDrop() {
-        // 找到所有特征条目
-        for (int i = 0; i < featuresContainer.getChildCount(); i++) {
-            View featureView = featuresContainer.getChildAt(i);
-
-            // 设置长按监听器，启动拖动
-            featureView.setOnLongClickListener(v -> {
-                featureView.setBackgroundColor(android.graphics.Color.parseColor("#FF6750A4")); // 恢复原始颜色
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
-                // 启动拖动，并将当前 View 的状态传递给 DragEvent
-                v.startDragAndDrop(null, shadowBuilder, v, 0);
-                return true;
-            });
-        }
+        // 为所有特征条目设置拖动功能
+        setupDragForContainer(featuresContainer);
 
         // 设置垃圾桶的拖放监听器
         trashcanItemsContainer.setOnDragListener((v, event) -> {
@@ -91,17 +157,14 @@ public class SFAPageTwoFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    // 拖动进入垃圾桶
-                    trashcanImage.setAlpha(0.5f); // 高亮垃圾桶
+                    trashcanImage.setAlpha(0.5f);
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
-                    // 拖动离开垃圾桶
-                    trashcanImage.setAlpha(1.0f); // 恢复垃圾桶透明度
+                    trashcanImage.setAlpha(1.0f);
                     return true;
 
                 case DragEvent.ACTION_DROP:
-                    // 获取被拖动的条目
                     View droppedView = (View) event.getLocalState();
 
                     if (droppedView instanceof TextView) {
@@ -111,26 +174,23 @@ public class SFAPageTwoFragment extends Fragment {
                             return true;
                         }
 
-                        // 检查并从原父容器中移除
                         if (droppedTextView.getParent() instanceof ViewGroup) {
                             ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                         }
 
-                        // 添加到 FlexboxLayout 容器
-                        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        );
-                        params.setMargins(16, 16, 16, 16);
+                        com.google.android.flexbox.FlexboxLayout.LayoutParams params =
+                                new com.google.android.flexbox.FlexboxLayout.LayoutParams(
+                                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                                        ViewGroup.LayoutParams.WRAP_CONTENT
+                                );
+                        params.setMargins(3, 3, 3, 3);
                         trashcanItemsContainer.addView(droppedTextView, params);
 
                         trashcanContents.add(droppedTextView.getText().toString());
-
-                        // 设置垃圾桶条目的拖动功能
                         setupTrashcanItem(droppedTextView);
                     }
 
-                    trashcanImage.setAlpha(1.0f); // 恢复垃圾桶透明度
+                    trashcanImage.setAlpha(1.0f);
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
@@ -141,11 +201,17 @@ public class SFAPageTwoFragment extends Fragment {
                             if (droppedTextView.getParent() instanceof ViewGroup) {
                                 ((ViewGroup) droppedTextView.getParent()).removeView(droppedTextView);
                             }
-                            // 如果条目未被任何容器接收，则还原到 featuresContainer
-                            GridLayout.LayoutParams defaultParams = new GridLayout.LayoutParams();
-                            defaultParams.setGravity(Gravity.CENTER);
+
+                            // 使用FlexboxLayout.LayoutParams
+                            com.google.android.flexbox.FlexboxLayout.LayoutParams defaultParams =
+                                    new com.google.android.flexbox.FlexboxLayout.LayoutParams(
+                                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                                            ViewGroup.LayoutParams.WRAP_CONTENT
+                                    );
+                            defaultParams.setMargins(6, 6, 6, 6);
                             featuresContainer.addView(droppedTextView, defaultParams);
                             trashcanContents.remove(droppedTextView.getText().toString());
+                            setupDragForView(droppedTextView);
                         }
                     }
 
@@ -157,11 +223,34 @@ public class SFAPageTwoFragment extends Fragment {
         });
     }
 
-    // 为垃圾桶条目设置拖动功能
+    private void setupDragForContainer(ViewGroup container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            setupDragForView(child);
+        }
+    }
+
+    private void setupDragForView(View view) {
+        view.setOnLongClickListener(v -> {
+            // 重置背景颜色
+            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+            drawable.setColor(android.graphics.Color.parseColor("#FF6750A4"));
+            drawable.setCornerRadius(8);
+            v.setBackground(drawable);
+
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+            v.startDragAndDrop(null, shadowBuilder, v, 0);
+            return true;
+        });
+    }
+
     private void setupTrashcanItem(TextView item) {
         item.setOnLongClickListener(v -> {
             // 重置背景颜色
-            item.setBackgroundColor(android.graphics.Color.parseColor("#FF6750A4")); // 恢复原始颜色
+            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+            drawable.setColor(android.graphics.Color.parseColor("#FF6750A4"));
+            drawable.setCornerRadius(8);
+            item.setBackground(drawable);
 
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             v.startDragAndDrop(null, shadowBuilder, v, 0);
@@ -170,41 +259,64 @@ public class SFAPageTwoFragment extends Fragment {
     }
 
     private void checkFeedback() {
-        boolean allCorrect = true; // 用于标记是否全部正确
-        // 1. 检查垃圾桶内的特性
+        boolean allCorrect = true;
+
+        // 检查垃圾桶内的特性
         for (int i = 0; i < trashcanItemsContainer.getChildCount(); i++) {
             View child = trashcanItemsContainer.getChildAt(i);
             if (child instanceof TextView) {
                 TextView featureView = (TextView) child;
                 String featureText = featureView.getText().toString();
 
-                if (correctFeatures.contains(featureText)) {
-                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336"));
+                android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+                drawable.setCornerRadius(8);
+
+                if (correctFeaturesText.contains(featureText)) {
+                    drawable.setColor(android.graphics.Color.parseColor("#F44336")); // 红色 - 错误放入垃圾桶
                     allCorrect = false;
                 } else {
-                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"));
+                    drawable.setColor(android.graphics.Color.parseColor("#4CAF50")); // 绿色 - 正确放入垃圾桶
                 }
+                featureView.setBackground(drawable);
             }
         }
 
-        // 2. 检查遗漏在外的特性
+        // 检查遗漏在外的特性
         for (int i = 0; i < featuresContainer.getChildCount(); i++) {
             View child = featuresContainer.getChildAt(i);
             if (child instanceof TextView) {
                 TextView featureView = (TextView) child;
                 String featureText = featureView.getText().toString();
 
-                if (correctFeatures.contains(featureText)) {
-                    continue;
-                } else{
-                    featureView.setBackgroundColor(android.graphics.Color.parseColor("#F44336")); // 红色
+                android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+                drawable.setCornerRadius(8);
+
+                if (correctFeaturesText.contains(featureText)) {
+                    drawable.setColor(android.graphics.Color.parseColor("#4CAF50")); // 绿色 - 正确保留
+                } else {
+                    drawable.setColor(android.graphics.Color.parseColor("#F44336")); // 红色 - 错误保留
                     allCorrect = false;
                 }
+                featureView.setBackground(drawable);
             }
         }
 
         if (allCorrect) {
             android.widget.Toast.makeText(getContext(), "恭喜你全部回答正确！", android.widget.Toast.LENGTH_LONG).show();
+//            navigateToPageThree();
         }
     }
+
+//    private void navigateToPageThree() {
+//        SFAPageThreeFragment pageThreeFragment = SFAPageThreeFragment.newInstance(
+//                correctFeaturesText, // 传递正确的特征
+//                imageName            // 传递图片名称
+//        );
+//
+//        getParentFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragment_container, pageThreeFragment)
+//                .addToBackStack(null)
+//                .commit();
+//    }
 }
