@@ -3,6 +3,8 @@ package com.example.myapplication;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.text.InputType;
 import android.view.View;
@@ -21,8 +24,10 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +39,24 @@ public class MainActivity extends AppCompatActivity {
     private boolean fragmentsAdded = false; //
     private boolean isSwipeEnabled = true; // 是否允许滑动
 
+    private String currentSubjectId;
+
     private List<String> imageNames;
+
+    private Map<String, FeatureData> imageFeatureDataMap = new HashMap<>();
+
+    public static class FeatureData {
+        private List<Feature> selectedFeatures;
+        private List<String> correctFeaturesText;
+
+        public FeatureData(List<Feature> selectedFeatures, List<String> correctFeaturesText) {
+            this.selectedFeatures = selectedFeatures;
+            this.correctFeaturesText = correctFeaturesText;
+        }
+
+        public List<Feature> getSelectedFeatures() { return selectedFeatures; }
+        public List<String> getCorrectFeaturesText() { return correctFeaturesText; }
+    }
 
     private int[] G1Aimages = {
             R.drawable.g1aitem0, R.drawable.g1aitem1,
@@ -88,6 +110,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 获取 Subject ID
+        currentSubjectId = getIntent().getStringExtra("subject_id");
+        if (currentSubjectId == null || currentSubjectId.isEmpty()) {
+            currentSubjectId = getCurrentSubjectId();
+        }
+
+        // 如果没有 Subject ID，返回输入界面
+        if (currentSubjectId.isEmpty()) {
+            startSubjectIdActivity();
+            return;
+        }
 
         userSelection = getIntent().getStringExtra("selection");
 
@@ -296,18 +330,96 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
     }
+
     private void createSFAFragments() {
         fragmentList.clear(); // 清空现有的Fragment列表
 
+        // 显示加载对话框
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("加载中");
+        progressDialog.setMessage("正在加载数据，请稍候...");
+        progressDialog.setCancelable(false); // 不允许用户取消
+        progressDialog.show();
+
+        // 异步加载数据
+        new Thread(() -> {
+            try {
+                loadAllImageFeatures();
+
+                // 回到主线程创建Fragment并更新UI
+                runOnUiThread(() -> {
+                    createFragmentsWithData();
+                    progressDialog.dismiss(); // 关闭加载对话框
+
+                    // 设置适配器
+                    adapter = new ViewPagerAdapter(this, fragmentList);
+                    viewPager.setAdapter(adapter);
+
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "加载数据失败，请重试", Toast.LENGTH_LONG).show();
+                    // 可以考虑退出Activity或者提供重试选项
+                    finish();
+                });
+            }
+        }).start();
+    }
+
+    private void createFragmentsWithData() {
         for (String imageName : imageNames) {
+            FeatureData featureData = imageFeatureDataMap.get(imageName);
+
+            List<Feature> selectedFeatures = new ArrayList<>();
+            List<String> correctFeatures = new ArrayList<>();
+
+            if (featureData != null) {
+                selectedFeatures = featureData.getSelectedFeatures();
+                correctFeatures = featureData.getCorrectFeaturesText();
+            }
+
             // 为每张图片创建7个Fragment
             fragmentList.add(SFAPageOneFragment.newInstance(imageName));
-            fragmentList.add(SFAPageTwoFragment.newInstance(imageName));
-            fragmentList.add(SFAPageThreeFragment.newInstance(new ArrayList<>(), imageName));
+            fragmentList.add(SFAPageTwoFragment.newInstance(imageName, selectedFeatures, correctFeatures));
+            fragmentList.add(SFAPageThreeFragment.newInstance(correctFeatures, imageName));
             fragmentList.add(SFAPageFourFragment.newInstance(imageName));
-//            fragmentList.add(SFAPageFiveFragment.newInstance(imageName));
+            fragmentList.add(SFAPageFiveFragment.newInstance(imageName, selectedFeatures, correctFeatures));
             fragmentList.add(SFAPageSixFragment.newInstance(imageName));
             fragmentList.add(SFAPageSevenFragment.newInstance(imageName));
+        }
+    }
+
+    private void loadAllImageFeatures() {
+        String csvFileName = "treatment_organized.csv";
+
+        for (String imageName : imageNames) {
+            try {
+                // 读取当前图片的所有特征
+                List<Feature> allFeatures = ExcelReader.getFeaturesForWord(this, csvFileName, imageName);
+
+                // 选择8个正确特征和8个错误特征
+                List<Feature> selectedFeatures = ExcelReader.selectFeatures(allFeatures, 8, 8);
+
+                // 提取正确特征的文本
+                List<String> correctFeaturesText = new ArrayList<>();
+                for (Feature feature : selectedFeatures) {
+                    if (feature.hasFeature()) {
+                        correctFeaturesText.add(feature.getFeatureZh());
+                    }
+                }
+
+                // 存储完整的特征数据
+                FeatureData featureData = new FeatureData(selectedFeatures, correctFeaturesText);
+                imageFeatureDataMap.put(imageName, featureData);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 如果读取失败，放入空数据
+                FeatureData emptyData = new FeatureData(new ArrayList<>(), new ArrayList<>());
+                imageFeatureDataMap.put(imageName, emptyData);
+            }
         }
     }
 
@@ -389,6 +501,27 @@ public class MainActivity extends AppCompatActivity {
             return fragments.size();
         }
     }
+
+    private String getCurrentSubjectId() {
+        SharedPreferences preferences = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        return preferences.getString("current_subject_id", "");
+    }
+
+    public String getActivitySubjectId() {
+        return currentSubjectId != null ? currentSubjectId : "unknown";
+    }
+
+    private void startSubjectIdActivity() {
+        Intent intent = new Intent(MainActivity.this, SubjectIdActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    // 在需要保存数据的方法中使用 Subject ID
+//    private void saveDataWithSubjectId(String data) {
+//        String fileName = currentSubjectId + "_data_" + System.currentTimeMillis() + ".txt";
+//        // 保存数据的逻辑...
+//    }
 
     private void updateVNESTPageFour(String subject, String object) {
         // 创建一个新的 VNESTPageFour 实例，并传入参数

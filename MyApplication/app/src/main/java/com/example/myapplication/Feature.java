@@ -14,9 +14,16 @@ public class Feature {
         this.hasFeature = hasFeature;
     }
 
+    public Feature() {
+    }
+
     // Getters
     public String getWordEn() { return wordEn; }
     public String getWordZh() { return wordZh; }
     public String getFeatureZh() { return featureZh; }
     public boolean hasFeature() { return hasFeature; }
+    public void setWordEn(String wordEn) { this.wordEn = wordEn; }
+    public void setWordZh(String wordZh) { this.wordZh = wordZh; }
+    public void setFeatureZh(String featureZh) { this.featureZh = featureZh; }
+    public void setHasFeature(boolean hasFeature) { this.hasFeature = hasFeature; }
 }

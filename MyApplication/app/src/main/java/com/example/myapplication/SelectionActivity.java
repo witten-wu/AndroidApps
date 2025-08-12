@@ -4,20 +4,43 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SelectionActivity extends AppCompatActivity {
+
+    private String currentSubjectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
 
+        // 获取 Subject ID
+        currentSubjectId = getIntent().getStringExtra("subject_id");
+        if (currentSubjectId == null || currentSubjectId.isEmpty()) {
+            currentSubjectId = getCurrentSubjectId();
+        }
+
+        // 如果还是没有 Subject ID，返回输入界面
+        if (currentSubjectId.isEmpty()) {
+            startSubjectIdActivity();
+            return;
+        }
+
+        // 显示当前的 Subject ID（可选）
+        TextView subjectIdDisplay = findViewById(R.id.subjectIdDisplay); // 需要在布局中添加
+        if (subjectIdDisplay != null) {
+            subjectIdDisplay.setText("当前被试: " + currentSubjectId);
+        }
+
         // 选择 A 按钮
         Button buttonA = findViewById(R.id.buttonA);
         buttonA.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "A"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
@@ -26,6 +49,7 @@ public class SelectionActivity extends AppCompatActivity {
         buttonB.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "B"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
@@ -34,6 +58,7 @@ public class SelectionActivity extends AppCompatActivity {
         buttonC.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "C"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
@@ -41,6 +66,7 @@ public class SelectionActivity extends AppCompatActivity {
         buttonD.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "D"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
@@ -48,6 +74,7 @@ public class SelectionActivity extends AppCompatActivity {
         buttonE.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "E"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
@@ -55,21 +82,49 @@ public class SelectionActivity extends AppCompatActivity {
         buttonF.setOnClickListener(v -> {
             Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
             intent.putExtra("selection", "F"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
             startActivity(intent);
         });
 
-        Button buttonLogout = findViewById(R.id.logoutButton);
-        buttonLogout.setOnClickListener(v -> {
-            // 清除登录状态
-            SharedPreferences preferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("is_logged_in", false);
-            editor.apply();
+//        Button buttonLogout = findViewById(R.id.logoutButton);
+//        buttonLogout.setOnClickListener(v -> {
+//            // 清除登录状态
+//            SharedPreferences preferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
+//            SharedPreferences.Editor editor = preferences.edit();
+//            editor.putBoolean("is_logged_in", false);
+//            editor.apply();
+//
+//            // 返回登录界面
+//            Intent intent = new Intent(SelectionActivity.this, LoginActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//        });
+        Button exchangeSubjectButton = findViewById(R.id.exchangeSubjectButton); // 原来的 logoutButton
+        exchangeSubjectButton.setOnClickListener(v -> {
+            // 清除当前的 Subject ID
+            clearSubjectId();
 
-            // 返回登录界面
-            Intent intent = new Intent(SelectionActivity.this, LoginActivity.class);
+            // 返回 Subject ID 输入界面
+            Intent intent = new Intent(SelectionActivity.this, SubjectIdActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
+    }
+    private String getCurrentSubjectId() {
+        SharedPreferences preferences = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        return preferences.getString("current_subject_id", "");
+    }
+
+    private void clearSubjectId() {
+        SharedPreferences preferences = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("current_subject_id");
+        editor.apply();
+    }
+
+    private void startSubjectIdActivity() {
+        Intent intent = new Intent(SelectionActivity.this, SubjectIdActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

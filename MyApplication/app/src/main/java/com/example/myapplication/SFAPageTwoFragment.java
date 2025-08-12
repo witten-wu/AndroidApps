@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
@@ -13,15 +14,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.widget.GridLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import com.google.android.flexbox.FlexboxLayout;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SFAPageTwoFragment extends Fragment {
     private static final String ARG_IMAGE_NAME = "image_name";
+    private static final String ARG_CORRECT_FEATURES = "correct_features";
+    private static final String ARG_SELECTED_FEATURES = "selected_features";
     private String imageName;
     private FlexboxLayout featuresContainer;       // 特征条目容器
     //private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
@@ -32,11 +41,34 @@ public class SFAPageTwoFragment extends Fragment {
     private List<String> trashcanContents;       // 用于记录垃圾桶的内容
     private List<Feature> selectedFeatures;
     private List<String> correctFeaturesText;
+    private String subjectId;
+    private static final String TAG = "SFAPageTwoFragment";
+    private long pageStartTime;
+    private long totalTimeOnPage = 0; // 累计停留时间
+    private long lastResumeTime; // 最后一次resume的时间
+    private int submitClickCount = 0;
+    private boolean hasUserInteracted = false; // 用户是否有过交互
+    private int sessionCount = 0; // 用户访问这个Fragment的次数
+//    private boolean isDataSaved = false; // 数据是否已保存
 
-    public static SFAPageTwoFragment newInstance(String imageName) {
+
+    public static SFAPageTwoFragment newInstance(String imageName, List<Feature> selectedFeatures, List<String> correctFeatures) {
         SFAPageTwoFragment fragment = new SFAPageTwoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_IMAGE_NAME, imageName);
+        args.putStringArrayList(ARG_CORRECT_FEATURES, new ArrayList<>(correctFeatures));
+
+        // 将 selectedFeatures 转换为可序列化的格式
+        ArrayList<Bundle> selectedFeaturesBundles = new ArrayList<>();
+        for (Feature feature : selectedFeatures) {
+            Bundle featureBundle = new Bundle();
+            featureBundle.putString("featureZh", feature.getFeatureZh());
+            featureBundle.putBoolean("hasFeature", feature.hasFeature());
+            // 添加其他需要的字段
+            selectedFeaturesBundles.add(featureBundle);
+        }
+        args.putParcelableArrayList(ARG_SELECTED_FEATURES, selectedFeaturesBundles);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +78,38 @@ public class SFAPageTwoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             imageName = getArguments().getString(ARG_IMAGE_NAME);
+            pageStartTime = System.currentTimeMillis();
+            // 获取正确特征文本
+            ArrayList<String> features = getArguments().getStringArrayList(ARG_CORRECT_FEATURES);
+            if (features != null) {
+                correctFeaturesText = features;
+            }
+
+            // 获取选中的特征列表
+            ArrayList<Bundle> selectedFeaturesBundles = getArguments().getParcelableArrayList(ARG_SELECTED_FEATURES);
+            if (selectedFeaturesBundles != null) {
+                selectedFeatures = new ArrayList<>();
+                for (Bundle featureBundle : selectedFeaturesBundles) {
+                    Feature feature = new Feature();
+                    feature.setFeatureZh(featureBundle.getString("featureZh"));
+                    feature.setHasFeature(featureBundle.getBoolean("hasFeature"));
+                    // 设置其他字段
+                    selectedFeatures.add(feature);
+                }
+            }
         }
+        hasUserInteracted = false;
+        // 恢复状态
+        if (savedInstanceState != null) {
+            totalTimeOnPage = savedInstanceState.getLong("totalTimeOnPage", 0);
+            submitClickCount = savedInstanceState.getInt("submitClickCount", 0);
+//            hasUserInteracted = savedInstanceState.getBoolean("hasUserInteracted", false);
+            sessionCount = savedInstanceState.getInt("sessionCount", 0);
+//            isDataSaved = savedInstanceState.getBoolean("isDataSaved", false);
+        }
+
+        pageStartTime = System.currentTimeMillis();
+        sessionCount++;
     }
 
     public SFAPageTwoFragment() {
@@ -64,6 +127,8 @@ public class SFAPageTwoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        subjectId = getSubjectIdFromActivity();
+
         // 初始化组件
         featuresContainer = view.findViewById(R.id.featuresContainer);
         trashcanItemsContainer = view.findViewById(R.id.trashcanItemsContainer);
@@ -72,37 +137,49 @@ public class SFAPageTwoFragment extends Fragment {
         mainImage = view.findViewById(R.id.mainImage);
         Button submitButton = view.findViewById(R.id.submitButton);
 
-        loadWordData();
+        ImageUtils.loadImageFromAssets(getContext(), mainImage, imageName);
+
+        // 动态生成特征条目
+        generateFeatureItems();
 
         // 设置拖拽功能
         setupDragAndDrop();
 
         submitButton.setOnClickListener(v -> {
+            submitClickCount++;
+            hasUserInteracted = true;
             checkFeedback();
         });
     }
 
-    private void loadWordData() {
-        // 从CSV文件读取特征数据
-        String csvFileName = "treatment_organized.csv"; // 改为CSV文件
-        List<Feature> allFeatures = ExcelReader.getFeaturesForWord(getContext(), csvFileName, imageName);
-
-        // 选择8个正确特征和8个错误特征
-        selectedFeatures = ExcelReader.selectFeatures(allFeatures, 8, 8);
-
-        // 提取正确特征的文本用于后续验证
-        correctFeaturesText = new ArrayList<>();
-        for (Feature feature : selectedFeatures) {
-            if (feature.hasFeature()) {
-                correctFeaturesText.add(feature.getFeatureZh());
-            }
+    private String getSubjectIdFromActivity() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getActivitySubjectId();
         }
+        return "unknown";
+    }
 
-        // 加载对应的图片
-        ImageUtils.loadImageFromAssets(getContext(), mainImage, imageName);
+    private String getDeviceIdentifier() {
+        try {
+            String androidId = android.provider.Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
 
-        // 动态生成特征条目
-        generateFeatureItems();
+            // 确保 Android ID 有效（不为空且不是已知的无效值）
+            if (androidId != null && !androidId.isEmpty() && !"9774d56d682e549c".equals(androidId)) {
+                return androidId;
+            } else {
+                // 如果获取不到有效的 Android ID，使用一个默认值
+                Log.w(TAG, "Invalid or null Android ID, using default");
+                return "unknown";
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get Android ID", e);
+            return "unknown";
+        }
     }
 
     private void generateFeatureItems() {
@@ -128,8 +205,8 @@ public class SFAPageTwoFragment extends Fragment {
     private TextView createFeatureTextView(String text) {
         TextView textView = new TextView(getContext());
         textView.setText(text);
-        textView.setTextSize(23); // 稍微调小字体
-        textView.setPadding(3, 3, 3, 3); // 调整内边距
+        textView.setTextSize(30); // 稍微调小字体
+        textView.setPadding(2, 0, 2, 0); // 调整内边距
         textView.setTextColor(android.graphics.Color.WHITE);
         textView.setGravity(Gravity.CENTER);
         textView.setMaxLines(4); // 限制最大行数
@@ -165,6 +242,7 @@ public class SFAPageTwoFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DROP:
+                    hasUserInteracted = true;
                     View droppedView = (View) event.getLocalState();
 
                     if (droppedView instanceof TextView) {
@@ -194,6 +272,7 @@ public class SFAPageTwoFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
+                    hasUserInteracted = true;
                     if (!event.getResult()) {
                         View droppedView2 = (View) event.getLocalState();
                         if (droppedView2 instanceof TextView) {
@@ -258,6 +337,186 @@ public class SFAPageTwoFragment extends Fragment {
         });
     }
 
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!hasUserInteracted) {
+            return;
+        }
+        // 保存当前状态
+        if (lastResumeTime > 0) {
+            totalTimeOnPage += System.currentTimeMillis() - lastResumeTime;
+        }
+        outState.putLong("totalTimeOnPage", totalTimeOnPage);
+        outState.putInt("submitClickCount", submitClickCount);
+        outState.putBoolean("hasUserInteracted", hasUserInteracted);
+        outState.putInt("sessionCount", sessionCount);
+//        outState.putBoolean("isDataSaved", isDataSaved);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastResumeTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 累计停留时间
+        if (lastResumeTime > 0) {
+            totalTimeOnPage += System.currentTimeMillis() - lastResumeTime;
+            lastResumeTime = 0;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 只在Fragment真正销毁时保存最终数据
+        if (hasUserInteracted) {
+            saveFinalData();
+        }
+    }
+
+    private void saveFinalData() {
+        try {
+            // 计算最终总停留时间
+            long finalTotalTime = totalTimeOnPage;
+            if (lastResumeTime > 0) {
+                finalTotalTime += System.currentTimeMillis() - lastResumeTime;
+            }
+
+            // 创建数据对象
+            Map<String, Object> data = new HashMap<>();
+            data.put("imageName", imageName);
+            data.put("subjectId", subjectId);
+            data.put("experiment", "SFAStep2Part1");
+            data.put("sessionCount", sessionCount); // 用户访问这个Fragment的总次数
+            data.put("totalDuration", finalTotalTime); // 累计停留时间
+            data.put("submitClickCount", submitClickCount); // 总点击submit次数
+
+            // 原始特征数据
+            List<String> originalFeatures = new ArrayList<>();
+            for (Feature feature : selectedFeatures) {
+                originalFeatures.add(feature.getFeatureZh());
+            }
+            data.put("originalFeatures", originalFeatures);
+            data.put("correctFeatures", correctFeaturesText);
+
+            // 最终状态
+            List<Map<String, Object>> featuresContainerData = collectContainerData(featuresContainer);
+            List<Map<String, Object>> trashcanData = collectContainerData(trashcanItemsContainer);
+            data.put("finalFeaturesContainer", featuresContainerData);
+            data.put("finalTrashcan", trashcanData);
+
+            // 正确性评估
+            data.put("correctnessAnalysis", analyzeCorrectness(featuresContainerData, trashcanData));
+
+            // 转换为JSON并保存
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonData = gson.toJson(data);
+
+            saveToFile(jsonData);
+//            isDataSaved = true;
+
+            Log.d(TAG, "Final data saved successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving final data", e);
+        }
+    }
+
+
+    private List<Map<String, Object>> collectContainerData(ViewGroup container) {
+        List<Map<String, Object>> containerData = new ArrayList<>();
+
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView textView = (TextView) child;
+                Map<String, Object> itemData = new HashMap<>();
+                itemData.put("text", textView.getText().toString());
+                itemData.put("isCorrect", correctFeaturesText.contains(textView.getText().toString()));
+                containerData.add(itemData);
+            }
+        }
+
+        return containerData;
+    }
+
+    private Map<String, Object> analyzeCorrectness(List<Map<String, Object>> featuresData, List<Map<String, Object>> trashcanData) {
+        Map<String, Object> analysis = new HashMap<>();
+
+        int correctInFeatures = 0;
+        int incorrectInFeatures = 0;
+        int correctInTrashcan = 0;
+        int incorrectInTrashcan = 0;
+
+        // 分析特征容器
+        for (Map<String, Object> item : featuresData) {
+            boolean isCorrect = (Boolean) item.get("isCorrect");
+            if (isCorrect) {
+                correctInFeatures++;
+            } else {
+                incorrectInFeatures++;
+            }
+        }
+
+        // 分析垃圾桶
+        for (Map<String, Object> item : trashcanData) {
+            boolean isCorrect = (Boolean) item.get("isCorrect");
+            if (isCorrect) {
+                incorrectInTrashcan++; // 正确的特征被错误地放入垃圾桶
+            } else {
+                correctInTrashcan++; // 错误的特征被正确地放入垃圾桶
+            }
+        }
+
+        analysis.put("correctInFeatures", correctInFeatures);
+        analysis.put("incorrectInFeatures", incorrectInFeatures);
+        analysis.put("correctInTrashcan", correctInTrashcan);
+        analysis.put("incorrectInTrashcan", incorrectInTrashcan);
+
+        boolean allCorrect = (incorrectInFeatures == 0 && incorrectInTrashcan == 0);
+        analysis.put("allCorrect", allCorrect);
+
+        return analysis;
+    }
+
+    // 保存到文件
+    private void saveToFile(String jsonData) {
+        try {
+            String deviceId = getDeviceIdentifier();
+            long timestamp = System.currentTimeMillis();
+
+            // 创建目录结构：deviceId/subjectId/SFA/
+            File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
+            File subjectFolder = new File(deviceFolder, subjectId);
+            File experimentFolder = new File(subjectFolder, "SFA");
+
+            if (!experimentFolder.exists()) {
+                boolean created = experimentFolder.mkdirs();
+                if (!created) {
+                    Log.e(TAG, "Failed to create folder structure");
+                    return;
+                }
+            }
+
+            // 文件名：timestamp_imageName_step2part1.json
+            String fileName = timestamp + "_" + imageName + "_step2part1.json";
+            File file = new File(experimentFolder, fileName);
+
+            FileWriter writer = new FileWriter(file);
+            writer.write(jsonData);
+            writer.close();
+
+            Log.d(TAG, "Data saved to: " + file.getAbsolutePath());
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error writing file", e);
+        }
+    }
+
+
     private void checkFeedback() {
         boolean allCorrect = true;
 
@@ -302,21 +561,8 @@ public class SFAPageTwoFragment extends Fragment {
         }
 
         if (allCorrect) {
-            android.widget.Toast.makeText(getContext(), "恭喜你全部回答正确！", android.widget.Toast.LENGTH_LONG).show();
-//            navigateToPageThree();
+            android.widget.Toast.makeText(getContext(), "全部回答正确！", android.widget.Toast.LENGTH_LONG).show();
         }
     }
 
-//    private void navigateToPageThree() {
-//        SFAPageThreeFragment pageThreeFragment = SFAPageThreeFragment.newInstance(
-//                correctFeaturesText, // 传递正确的特征
-//                imageName            // 传递图片名称
-//        );
-//
-//        getParentFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.fragment_container, pageThreeFragment)
-//                .addToBackStack(null)
-//                .commit();
-//    }
 }

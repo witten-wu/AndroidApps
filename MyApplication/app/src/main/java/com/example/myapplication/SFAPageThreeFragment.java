@@ -121,8 +121,8 @@ public class SFAPageThreeFragment extends Fragment {
     private TextView createFeatureTextView(String text) {
         TextView textView = new TextView(getContext());
         textView.setText(text);
-        textView.setTextSize(23);
-        textView.setPadding(3, 3, 3, 3);
+        textView.setTextSize(30);
+        textView.setPadding(2, 0, 2, 0);
         textView.setTextColor(android.graphics.Color.WHITE);
         textView.setGravity(Gravity.CENTER);
         textView.setMaxLines(4);
@@ -136,7 +136,7 @@ public class SFAPageThreeFragment extends Fragment {
         return textView;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
     private void setupDragAndDrop() {
         for (int i = 0; i < featuresContainer.getChildCount(); i++) {
             View featureView = featuresContainer.getChildAt(i);
@@ -146,12 +146,18 @@ public class SFAPageThreeFragment extends Fragment {
 
     private void setupDragForView(View view) {
         view.setOnLongClickListener(v -> {
+            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+            drawable.setColor(android.graphics.Color.parseColor("#FF6750A4"));
+            drawable.setCornerRadius(8);
+            v.setBackground(drawable);
+
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             v.startDragAndDrop(null, shadowBuilder, v, 0);
             return true;
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setDragListener(LinearLayout target) {
         target.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
@@ -224,7 +230,10 @@ public class SFAPageThreeFragment extends Fragment {
 
     private void setupTrashcanItem(TextView item) {
         item.setOnLongClickListener(v -> {
-            item.setBackgroundColor(android.graphics.Color.parseColor("#FF6750A4"));
+            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+            drawable.setColor(android.graphics.Color.parseColor("#FF6750A4"));
+            drawable.setCornerRadius(8);
+            item.setBackground(drawable);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             v.startDragAndDrop(null, shadowBuilder, v, 0);
             return true;

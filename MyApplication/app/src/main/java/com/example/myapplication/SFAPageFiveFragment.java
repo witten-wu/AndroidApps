@@ -1,12 +1,14 @@
 package com.example.myapplication;
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -22,7 +24,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class SFAPageFiveFragment extends Fragment {
-
+    private static final String ARG_IMAGE_NAME = "image_name";
+    private static final String ARG_SELECTED_FEATURES = "selected_features";
+    private static final String ARG_CORRECT_FEATURES = "correct_features";
+    private String imageName;
+    private ImageView mainImage;
+    private ArrayList<Feature> selectedFeatures;
+    private ArrayList<String> correctFeatures;
     private LinearLayout questionsContainer; // 问题容器
     private final List<Question> questions = new ArrayList<>(); // 问题列表
     private static int currentId = 1; // 全局唯一 ID
@@ -30,6 +38,27 @@ public class SFAPageFiveFragment extends Fragment {
     public SFAPageFiveFragment() {
         // Required empty public constructor
     }
+
+    public static SFAPageFiveFragment newInstance(String imageName, List<Feature> selectedFeatures, List<String> correctFeatures) {
+        SFAPageFiveFragment fragment = new SFAPageFiveFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_IMAGE_NAME, imageName);
+        args.putSerializable(ARG_SELECTED_FEATURES, new ArrayList<>(selectedFeatures));
+        args.putStringArrayList(ARG_CORRECT_FEATURES, new ArrayList<>(correctFeatures));
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            imageName = getArguments().getString(ARG_IMAGE_NAME);
+            selectedFeatures = (ArrayList<Feature>) getArguments().getSerializable(ARG_SELECTED_FEATURES);
+            correctFeatures = getArguments().getStringArrayList(ARG_CORRECT_FEATURES);
+        }
+    }
+
 
     @Nullable
     @Override
@@ -43,13 +72,16 @@ public class SFAPageFiveFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // 获取问题容器和提交按钮
+        mainImage = view.findViewById(R.id.mainImage);
         questionsContainer = view.findViewById(R.id.questionsContainer);
         Button submitButton = view.findViewById(R.id.submitButton);
+
+        ImageUtils.loadImageFromAssets(getContext(), mainImage, imageName);
 
         questions.clear();
 
         // 初始化问题数据
-        initializeQuestions();
+        initializeQuestionsFromFeatures();
 
         // 打乱问题顺序
         Collections.shuffle(questions);
@@ -99,26 +131,21 @@ public class SFAPageFiveFragment extends Fragment {
                     }
                 }
             }
-            // 如果全部答对，显示恭喜提示
+            // 如果全部答对，显示提示
             if (allCorrect) {
-                // 使用 Toast 提示用户
-                Toast.makeText(getContext(), "恭喜你全部回答正确！", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "全部回答正确！", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    // 初始化问题数据
-    private void initializeQuestions() {
-        questions.add(new Question("是一种动物", true));
-        questions.add(new Question("很轻的", false));
-        questions.add(new Question("是友善的", false));
-        questions.add(new Question("在家里可以找到", false));
-        questions.add(new Question("是捕食者", true));
-        questions.add(new Question("羊毛制成的", false));
-        questions.add(new Question("有两条腿", false));
-        questions.add(new Question("动作迅速的", true));
-        questions.add(new Question("可以吃人", true));
-        questions.add(new Question("是食肉的", true));
+    private void initializeQuestionsFromFeatures() {
+        // 基于 selectedFeatures 创建问题
+        for (Feature feature : selectedFeatures) {
+            String questionText = feature.getFeatureZh();
+            boolean isCorrect = feature.hasFeature(); // 特征的正确性
+
+            questions.add(new Question(questionText, isCorrect));
+        }
     }
 
     // 动态将问题添加到布局
@@ -127,7 +154,23 @@ public class SFAPageFiveFragment extends Fragment {
         LinearLayout questionLayout = new LinearLayout(getContext());
         questionLayout.setOrientation(LinearLayout.HORIZONTAL); // 水平排列
         questionLayout.setGravity(Gravity.CENTER); // 居中对齐
-        questionLayout.setPadding(8, 8, 8, 8);
+        questionLayout.setPadding(0, 0, 0, 0);
+
+        GradientDrawable border = new GradientDrawable();
+        border.setShape(GradientDrawable.RECTANGLE);
+        border.setStroke(2, Color.parseColor("#CCCCCC"));
+        border.setColor(Color.WHITE); // 背景色白色
+        border.setCornerRadius(8); // 圆角8dp
+
+        questionLayout.setBackground(border);
+
+        // 设置外边距
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(32, 1, 32, 1);
+        questionLayout.setLayoutParams(layoutParams);
 
         // 动态生成正确答案的 ID
         int correctAnswerId = generateUniqueId();
@@ -138,7 +181,7 @@ public class SFAPageFiveFragment extends Fragment {
         // 添加问题文本
         TextView questionText = new TextView(getContext());
         questionText.setText(question.text);
-        questionText.setTextSize(16);
+        questionText.setTextSize(30);
         questionText.setTextColor(Color.BLACK);
         questionText.setGravity(Gravity.CENTER); // 垂直居中
         questionText.setLayoutParams(new LinearLayout.LayoutParams(
@@ -154,6 +197,7 @@ public class SFAPageFiveFragment extends Fragment {
         // 创建选项 A
         RadioButton buttonA = new RadioButton(getContext());
         buttonA.setText("正确");
+        buttonA.setTextSize(30);
         buttonA.setGravity(Gravity.CENTER);
         if (question.correctAnswer) { // 如果 A 是正确答案
             buttonA.setId(correctAnswerId);
@@ -165,6 +209,7 @@ public class SFAPageFiveFragment extends Fragment {
         // 创建选项 B
         RadioButton buttonB = new RadioButton(getContext());
         buttonB.setText("错误");
+        buttonB.setTextSize(30);
         buttonB.setGravity(Gravity.CENTER);
         if (!question.correctAnswer) { // 如果 B 是正确答案
             buttonB.setId(correctAnswerId);

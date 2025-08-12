@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,11 +20,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.Manifest;
 import android.content.pm.PackageManager;
+
+import java.io.File;
 import java.io.IOException;
 
 public class RabStorPageOne extends Fragment {
 
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private static final String TAG = "RabStorPageOne";
     // 图片资源数组
     private final int[] images = {
             R.drawable.rbs_1, R.drawable.rbs_2, R.drawable.rbs_3,
@@ -36,6 +40,7 @@ public class RabStorPageOne extends Fragment {
     private MediaRecorder mediaRecorder; // 录音器
     private boolean isRecording = false; // 是否正在录音
     private String audioFilePath; // 录音文件路径
+    private String subjectId;
 
     @Nullable
     @Override
@@ -48,7 +53,9 @@ public class RabStorPageOne extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        audioFilePath = requireContext().getExternalFilesDir(null).getAbsolutePath() + "/RSrecording.3gp";
+        subjectId = getSubjectIdFromActivity();
+
+        audioFilePath = generateUniqueAudioPath(subjectId);
 
         // 找到 ViewPager2
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
@@ -70,6 +77,58 @@ public class RabStorPageOne extends Fragment {
 
             return false; // 返回 false 以允许其他事件（如滑动）继续处理
         });
+    }
+
+    private String getSubjectIdFromActivity() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getActivitySubjectId();
+        }
+        return "unknown";
+    }
+
+    private String generateUniqueAudioPath(String subjectId) {
+        String deviceId = getDeviceIdentifier();
+        long timestamp = System.currentTimeMillis();
+
+        File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
+        File subjectFolder = new File(deviceFolder, subjectId);
+        File experimentFolder = new File(subjectFolder, "RabbitStory");
+
+        // 创建所有必要的目录
+        if (!experimentFolder.exists()) {
+            boolean created = experimentFolder.mkdirs();
+            if (!created) {
+                Log.e(TAG, "Failed to create folder structure: " + experimentFolder.getAbsolutePath());
+                // 如果创建失败，回退到根目录
+                return requireContext().getExternalFilesDir(null).getAbsolutePath() + "/" + timestamp + ".3gp";
+            }
+        }
+
+        // 返回完整的文件路径：deviceId/subjectId/NameScreeners/timestamp.3gp
+        return experimentFolder.getAbsolutePath() + "/" + timestamp + ".3gp";
+    }
+
+    private String getDeviceIdentifier() {
+        try {
+            String androidId = android.provider.Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
+
+            // 确保 Android ID 有效（不为空且不是已知的无效值）
+            if (androidId != null && !androidId.isEmpty() && !"9774d56d682e549c".equals(androidId)) {
+                return androidId;
+            } else {
+                // 如果获取不到有效的 Android ID，使用一个默认值
+                Log.w(TAG, "Invalid or null Android ID, using default");
+                return "unknown";
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get Android ID", e);
+            return "unknown";
+        }
     }
 
     private void checkPermissionAndRecord() {
