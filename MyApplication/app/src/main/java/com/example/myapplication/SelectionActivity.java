@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,7 +100,8 @@ public class SelectionActivity extends AppCompatActivity {
 //            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            startActivity(intent);
 //        });
-        Button exchangeSubjectButton = findViewById(R.id.exchangeSubjectButton); // 原来的 logoutButton
+
+        LinearLayout exchangeSubjectButton = findViewById(R.id.exchangeSubjectButton); // 修改为 LinearLayout
         exchangeSubjectButton.setOnClickListener(v -> {
             // 清除当前的 Subject ID
             clearSubjectId();
@@ -109,6 +111,17 @@ public class SelectionActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
+
+//        Button exchangeSubjectButton = findViewById(R.id.exchangeSubjectButton); // 原来的 logoutButton
+//        exchangeSubjectButton.setOnClickListener(v -> {
+//            // 清除当前的 Subject ID
+//            clearSubjectId();
+//
+//            // 返回 Subject ID 输入界面
+//            Intent intent = new Intent(SelectionActivity.this, SubjectIdActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//        });
     }
     private String getCurrentSubjectId() {
         SharedPreferences preferences = getSharedPreferences("app_prefs", MODE_PRIVATE);

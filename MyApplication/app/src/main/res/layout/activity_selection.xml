@@ -26,7 +26,7 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_person"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="0dp"
                 app:tint="#1976D2" />
 
             <TextView
@@ -38,6 +38,35 @@
                 android:textSize="24sp"
                 android:textColor="#1976D2"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/exchangeSubjectButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_exit_to_app"
+                    android:layout_marginEnd="0dp"
+                    app:tint="#1976D2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="切换被试"
+                    android:textSize="24sp"
+                    android:textColor="#1976D2"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -51,17 +80,19 @@
 
     <Button
         android:id="@+id/buttonE"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="Naming Screener - Noun"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center" />
 
     <Button
         android:id="@+id/buttonF"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="Naming Screener - Verb"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -69,9 +100,10 @@
 
     <Button
         android:id="@+id/buttonA"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="SFA"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -79,9 +111,10 @@
 
     <Button
         android:id="@+id/buttonB"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="VNeST"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -89,9 +122,10 @@
 
     <Button
         android:id="@+id/buttonC"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="Rabbit Story"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -99,9 +133,11 @@
 
     <Button
         android:id="@+id/buttonD"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="Language Study"
+        android:textSize="20sp"
+        android:visibility="invisible"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -117,15 +153,15 @@
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
-    <Button
-        android:id="@+id/exchangeSubjectButton"
-        android:layout_width="210dp"
-        android:layout_height="55dp"
-        android:text="切换被试"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonD"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/exchangeSubjectButton"-->
+<!--        android:layout_width="210dp"-->
+<!--        android:layout_height="55dp"-->
+<!--        android:text="切换被试"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/buttonD"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
