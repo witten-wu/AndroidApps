@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
@@ -15,7 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +36,12 @@ public class SFAPageThreeFragment extends Fragment {
     private ImageView mainImage;
     private List<String> correctFeatures;
     private String imageName;
+    private String subjectId;
+    private static final String TAG = "SFAPageThreeFragment";
+    private long totalTimeOnPage = 0; // 累计停留时间
+    private long lastResumeTime; // 最后一次resume的时间
+    private int submitClickCount = 0;
+    private boolean hasUserInteracted = false;
 
     public SFAPageThreeFragment() {
         // Required empty public constructor
@@ -59,6 +71,10 @@ public class SFAPageThreeFragment extends Fragment {
             correctFeatures = getArguments().getStringArrayList(ARG_CORRECT_FEATURES);
             imageName = getArguments().getString(ARG_IMAGE_NAME);
         }
+
+        hasUserInteracted = false;
+        submitClickCount = 0;
+        totalTimeOnPage = 0;
     }
 
     @Nullable
@@ -70,6 +86,8 @@ public class SFAPageThreeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        subjectId = getSubjectIdFromActivity();
 
         // 初始化组件
         mainImage = view.findViewById(R.id.mainImage);
@@ -96,8 +114,40 @@ public class SFAPageThreeFragment extends Fragment {
         setDragListener(categoryBox);
 
         submitButton.setOnClickListener(v -> {
+            submitClickCount++;
+            hasUserInteracted = true;
             checkFeedback();
         });
+    }
+
+    private String getSubjectIdFromActivity() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getActivitySubjectId();
+        }
+        return "unknown";
+    }
+
+    private String getDeviceIdentifier() {
+        try {
+            String androidId = android.provider.Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
+
+            // 确保 Android ID 有效（不为空且不是已知的无效值）
+            if (androidId != null && !androidId.isEmpty() && !"9774d56d682e549c".equals(androidId)) {
+                return androidId;
+            } else {
+                // 如果获取不到有效的 Android ID，使用一个默认值
+                Log.w(TAG, "Invalid or null Android ID, using default");
+                return "unknown";
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get Android ID", e);
+            return "unknown";
+        }
     }
 
     private void generateFeatureItems() {
@@ -173,6 +223,7 @@ public class SFAPageThreeFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DROP:
+                    hasUserInteracted = true;
                     View droppedView = (View) event.getLocalState();
 
                     if (droppedView instanceof TextView) {
@@ -203,6 +254,7 @@ public class SFAPageThreeFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
+                    hasUserInteracted = true;
                     if (!event.getResult()) {
                         View droppedView2 = (View) event.getLocalState();
                         if (droppedView2 instanceof TextView) {
@@ -238,6 +290,148 @@ public class SFAPageThreeFragment extends Fragment {
             v.startDragAndDrop(null, shadowBuilder, v, 0);
             return true;
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastResumeTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 累计停留时间
+        if (lastResumeTime > 0) {
+            totalTimeOnPage += System.currentTimeMillis() - lastResumeTime;
+            lastResumeTime = 0;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (hasUserInteracted) {
+            saveFinalData();
+        }
+    }
+
+    private void saveFinalData() {
+        try {
+            // 计算最终总停留时间
+            long finalTotalTime = totalTimeOnPage;
+            if (lastResumeTime > 0) {
+                finalTotalTime += System.currentTimeMillis() - lastResumeTime;
+            }
+
+            // 创建数据对象
+            Map<String, Object> data = new HashMap<>();
+            data.put("imageName", imageName);
+            data.put("subjectId", subjectId);
+            data.put("experiment", "SFAStep2Part2");
+            data.put("totalDuration", finalTotalTime); // 累计停留时间
+            data.put("submitClickCount", submitClickCount); // 总点击submit次数
+
+            data.put("finalFeaturesContainer", collectFeaturesContainerTexts(featuresContainer));
+
+            // 最终状态
+            View rootView = getView();
+            if (rootView != null) {
+                data.put("functionBox", collectCategoryBoxTexts(rootView.findViewById(R.id.functionBox)));
+                data.put("characteristicsBox", collectCategoryBoxTexts(rootView.findViewById(R.id.characteristicsBox)));
+                data.put("physicalAttributesBox", collectCategoryBoxTexts(rootView.findViewById(R.id.physicalAttributesBox)));
+                data.put("locationBox", collectCategoryBoxTexts(rootView.findViewById(R.id.locationBox)));
+                data.put("categoryBox", collectCategoryBoxTexts(rootView.findViewById(R.id.categoryBox)));
+            }
+
+            // 正确性评估
+            //data.put("correctnessAnalysis", analyzeCorrectness(featuresContainerData, trashcanData));
+
+            // 转换为JSON并保存
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonData = gson.toJson(data);
+
+            saveToFile(jsonData);
+//            isDataSaved = true;
+
+            Log.d(TAG, "Final data saved successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving final data", e);
+        }
+    }
+
+    private List<String> collectFeaturesContainerTexts(ViewGroup container) {
+        List<String> containerTexts = new ArrayList<>();
+
+        if (container == null) {
+            return containerTexts;
+        }
+
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView textView = (TextView) child;
+                containerTexts.add(textView.getText().toString());
+            }
+        }
+
+        return containerTexts;
+    }
+
+    private List<String> collectCategoryBoxTexts(ViewGroup container) {
+        List<String> containerTexts = new ArrayList<>();
+
+        if (container == null) {
+            return containerTexts;
+        }
+
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView textView = (TextView) child;
+
+                // 只收集拖拽进来的特征项（有"feature"标签的）
+                if ("feature".equals(textView.getTag())) {
+                    containerTexts.add(textView.getText().toString());
+                }
+            }
+        }
+
+        return containerTexts;
+    }
+
+    // 保存到文件
+    private void saveToFile(String jsonData) {
+        try {
+            String deviceId = getDeviceIdentifier();
+            long timestamp = System.currentTimeMillis();
+
+            // 创建目录结构：deviceId/subjectId/SFA/
+            File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
+            File subjectFolder = new File(deviceFolder, subjectId);
+            File experimentFolder = new File(subjectFolder, "SFA");
+
+            if (!experimentFolder.exists()) {
+                boolean created = experimentFolder.mkdirs();
+                if (!created) {
+                    Log.e(TAG, "Failed to create folder structure");
+                    return;
+                }
+            }
+
+            // 文件名：timestamp_imageName_step2part1.json
+            String fileName = timestamp + "_" + imageName + "_step2part2.json";
+            File file = new File(experimentFolder, fileName);
+
+            FileWriter writer = new FileWriter(file);
+            writer.write(jsonData);
+            writer.close();
+
+            Log.d(TAG, "Data saved to: " + file.getAbsolutePath());
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error writing file", e);
+        }
     }
 
     private void checkFeedback() {

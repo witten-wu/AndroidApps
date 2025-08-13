@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +20,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SFAPageFiveFragment extends Fragment {
     private static final String ARG_IMAGE_NAME = "image_name";
@@ -34,6 +43,13 @@ public class SFAPageFiveFragment extends Fragment {
     private LinearLayout questionsContainer; // 问题容器
     private final List<Question> questions = new ArrayList<>(); // 问题列表
     private static int currentId = 1; // 全局唯一 ID
+
+    private String subjectId;
+    private static final String TAG = "SFAPageFiveFragment";
+    private long totalTimeOnPage = 0; // 累计停留时间
+    private long lastResumeTime; // 最后一次resume的时间
+    private int submitClickCount = 0;
+    private boolean hasUserInteracted = false; // 用户是否有过交互
 
     public SFAPageFiveFragment() {
         // Required empty public constructor
@@ -57,6 +73,10 @@ public class SFAPageFiveFragment extends Fragment {
             selectedFeatures = (ArrayList<Feature>) getArguments().getSerializable(ARG_SELECTED_FEATURES);
             correctFeatures = getArguments().getStringArrayList(ARG_CORRECT_FEATURES);
         }
+
+        hasUserInteracted = false;
+        submitClickCount = 0;
+        totalTimeOnPage = 0;
     }
 
 
@@ -70,6 +90,8 @@ public class SFAPageFiveFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        subjectId = getSubjectIdFromActivity();
 
         // 获取问题容器和提交按钮
         mainImage = view.findViewById(R.id.mainImage);
@@ -93,6 +115,9 @@ public class SFAPageFiveFragment extends Fragment {
 
         // 设置提交按钮点击事件
         submitButton.setOnClickListener(v -> {
+            submitClickCount++;
+            hasUserInteracted = true;
+
             boolean allCorrect = true;
             for (int i = 0; i < questionsContainer.getChildCount(); i++) {
                 View childView = questionsContainer.getChildAt(i);
@@ -136,6 +161,220 @@ public class SFAPageFiveFragment extends Fragment {
                 Toast.makeText(getContext(), "全部回答正确！", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private String getSubjectIdFromActivity() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getActivitySubjectId();
+        }
+        return "unknown";
+    }
+
+    private String getDeviceIdentifier() {
+        try {
+            String androidId = android.provider.Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
+
+            // 确保 Android ID 有效（不为空且不是已知的无效值）
+            if (androidId != null && !androidId.isEmpty() && !"9774d56d682e549c".equals(androidId)) {
+                return androidId;
+            } else {
+                // 如果获取不到有效的 Android ID，使用一个默认值
+                Log.w(TAG, "Invalid or null Android ID, using default");
+                return "unknown";
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get Android ID", e);
+            return "unknown";
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastResumeTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 累计停留时间
+        if (lastResumeTime > 0) {
+            totalTimeOnPage += System.currentTimeMillis() - lastResumeTime;
+            lastResumeTime = 0;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (hasUserInteracted) {
+            saveFinalData();
+        }
+    }
+
+    private void saveFinalData() {
+        try {
+            // 计算最终总停留时间
+            long finalTotalTime = totalTimeOnPage;
+            if (lastResumeTime > 0) {
+                finalTotalTime += System.currentTimeMillis() - lastResumeTime;
+            }
+
+            // 创建数据对象
+            Map<String, Object> data = new HashMap<>();
+            data.put("imageName", imageName);
+            data.put("subjectId", subjectId);
+            data.put("experiment", "SFAStep4");
+            data.put("totalDuration", finalTotalTime); // 累计停留时间
+            data.put("submitClickCount", submitClickCount); // 总点击submit次数
+
+            List<Map<String, Object>> questionsAnswers = collectQuestionsAnswers();
+            data.put("questionsAnswers", questionsAnswers);
+
+            Map<String, Object> statistics = calculateStatistics(questionsAnswers);
+            data.put("statistics", statistics);
+
+            // 转换为JSON并保存
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonData = gson.toJson(data);
+
+            saveToFile(jsonData);
+
+            Log.d(TAG, "Final data saved successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving final data", e);
+        }
+    }
+
+    private List<Map<String, Object>> collectQuestionsAnswers() {
+        List<Map<String, Object>> questionsData = new ArrayList<>();
+
+        // 遍历所有问题布局
+        for (int i = 0; i < questionsContainer.getChildCount(); i++) {
+            View childView = questionsContainer.getChildAt(i);
+            if (childView instanceof LinearLayout) {
+                LinearLayout questionLayout = (LinearLayout) childView;
+
+                // 获取问题文本
+                TextView questionTextView = (TextView) questionLayout.getChildAt(0);
+                String questionText = questionTextView.getText().toString();
+
+                // 获取RadioGroup
+                RadioGroup radioGroup = (RadioGroup) questionLayout.getChildAt(1);
+
+                // 获取正确答案的ID
+                int correctAnswerId = (int) questionLayout.getTag();
+
+                // 获取用户选择的选项ID
+                int selectedButtonId = radioGroup.getCheckedRadioButtonId();
+
+                // 确定正确答案文本
+                String correctAnswerText = getAnswerTextById(radioGroup, correctAnswerId);
+
+                // 确定用户答案文本
+                String userAnswerText;
+                if (selectedButtonId == -1) {
+                    userAnswerText = "N/A"; // 用户没有选择
+                } else {
+                    userAnswerText = getAnswerTextById(radioGroup, selectedButtonId);
+                }
+
+                // 判断是否正确
+                boolean isCorrect = (selectedButtonId != -1) && (selectedButtonId == correctAnswerId);
+
+                // 创建问题数据
+                Map<String, Object> questionData = new HashMap<>();
+                questionData.put("questionIndex", i + 1); // 问题序号（从1开始）
+                questionData.put("questionText", questionText);
+                questionData.put("correctAnswer", correctAnswerText);
+                questionData.put("userAnswer", userAnswerText);
+                questionData.put("isCorrect", isCorrect);
+
+                questionsData.add(questionData);
+            }
+        }
+
+        return questionsData;
+    }
+
+    private String getAnswerTextById(RadioGroup radioGroup, int buttonId) {
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            View child = radioGroup.getChildAt(i);
+            if (child instanceof RadioButton) {
+                RadioButton radioButton = (RadioButton) child;
+                if (radioButton.getId() == buttonId) {
+                    return radioButton.getText().toString(); // 返回 "正确" 或 "错误"
+                }
+            }
+        }
+        return "Unknown";
+    }
+
+    private Map<String, Object> calculateStatistics(List<Map<String, Object>> questionsAnswers) {
+        Map<String, Object> stats = new HashMap<>();
+
+        int totalQuestions = questionsAnswers.size();
+        int correctAnswers = 0;
+        int answeredQuestions = 0;
+
+        for (Map<String, Object> questionData : questionsAnswers) {
+            boolean isCorrect = (Boolean) questionData.get("isCorrect");
+            String userAnswer = (String) questionData.get("userAnswer");
+
+            if (isCorrect) {
+                correctAnswers++;
+            }
+
+            if (!"N/A".equals(userAnswer)) {
+                answeredQuestions++;
+            }
+        }
+
+        stats.put("totalQuestions", totalQuestions);
+        stats.put("correctAnswers", correctAnswers);
+        stats.put("answeredQuestions", answeredQuestions);
+        stats.put("accuracy", (double) correctAnswers / totalQuestions);
+        stats.put("completionRate", (double) answeredQuestions / totalQuestions);
+
+        return stats;
+    }
+
+    private void saveToFile(String jsonData) {
+        try {
+            String deviceId = getDeviceIdentifier();
+            long timestamp = System.currentTimeMillis();
+
+            // 创建目录结构：deviceId/subjectId/SFA/
+            File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
+            File subjectFolder = new File(deviceFolder, subjectId);
+            File experimentFolder = new File(subjectFolder, "SFA");
+
+            if (!experimentFolder.exists()) {
+                boolean created = experimentFolder.mkdirs();
+                if (!created) {
+                    Log.e(TAG, "Failed to create folder structure");
+                    return;
+                }
+            }
+
+            // 文件名：timestamp_imageName_step2part1.json
+            String fileName = timestamp + "_" + imageName + "_step4.json";
+            File file = new File(experimentFolder, fileName);
+
+            FileWriter writer = new FileWriter(file);
+            writer.write(jsonData);
+            writer.close();
+
+            Log.d(TAG, "Data saved to: " + file.getAbsolutePath());
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error writing file", e);
+        }
     }
 
     private void initializeQuestionsFromFeatures() {

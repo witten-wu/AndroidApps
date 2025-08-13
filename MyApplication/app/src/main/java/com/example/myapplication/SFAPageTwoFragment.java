@@ -34,7 +34,6 @@ public class SFAPageTwoFragment extends Fragment {
     private String imageName;
     private FlexboxLayout featuresContainer;       // 特征条目容器
     //private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
-
     private FlexboxLayout trashcanItemsContainer; // 垃圾桶条目容器
     private ImageView trashcanImage;             // 垃圾桶图片
     private ImageView mainImage;
@@ -43,14 +42,10 @@ public class SFAPageTwoFragment extends Fragment {
     private List<String> correctFeaturesText;
     private String subjectId;
     private static final String TAG = "SFAPageTwoFragment";
-    private long pageStartTime;
     private long totalTimeOnPage = 0; // 累计停留时间
     private long lastResumeTime; // 最后一次resume的时间
     private int submitClickCount = 0;
     private boolean hasUserInteracted = false; // 用户是否有过交互
-    private int sessionCount = 0; // 用户访问这个Fragment的次数
-//    private boolean isDataSaved = false; // 数据是否已保存
-
 
     public static SFAPageTwoFragment newInstance(String imageName, List<Feature> selectedFeatures, List<String> correctFeatures) {
         SFAPageTwoFragment fragment = new SFAPageTwoFragment();
@@ -78,7 +73,7 @@ public class SFAPageTwoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             imageName = getArguments().getString(ARG_IMAGE_NAME);
-            pageStartTime = System.currentTimeMillis();
+
             // 获取正确特征文本
             ArrayList<String> features = getArguments().getStringArrayList(ARG_CORRECT_FEATURES);
             if (features != null) {
@@ -98,18 +93,10 @@ public class SFAPageTwoFragment extends Fragment {
                 }
             }
         }
-        hasUserInteracted = false;
-        // 恢复状态
-        if (savedInstanceState != null) {
-            totalTimeOnPage = savedInstanceState.getLong("totalTimeOnPage", 0);
-            submitClickCount = savedInstanceState.getInt("submitClickCount", 0);
-//            hasUserInteracted = savedInstanceState.getBoolean("hasUserInteracted", false);
-            sessionCount = savedInstanceState.getInt("sessionCount", 0);
-//            isDataSaved = savedInstanceState.getBoolean("isDataSaved", false);
-        }
 
-        pageStartTime = System.currentTimeMillis();
-        sessionCount++;
+        hasUserInteracted = false;
+        submitClickCount = 0;
+        totalTimeOnPage = 0;
     }
 
     public SFAPageTwoFragment() {
@@ -337,21 +324,6 @@ public class SFAPageTwoFragment extends Fragment {
         });
     }
 
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (!hasUserInteracted) {
-            return;
-        }
-        // 保存当前状态
-        if (lastResumeTime > 0) {
-            totalTimeOnPage += System.currentTimeMillis() - lastResumeTime;
-        }
-        outState.putLong("totalTimeOnPage", totalTimeOnPage);
-        outState.putInt("submitClickCount", submitClickCount);
-        outState.putBoolean("hasUserInteracted", hasUserInteracted);
-        outState.putInt("sessionCount", sessionCount);
-//        outState.putBoolean("isDataSaved", isDataSaved);
-    }
 
     @Override
     public void onResume() {
@@ -372,7 +344,6 @@ public class SFAPageTwoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // 只在Fragment真正销毁时保存最终数据
         if (hasUserInteracted) {
             saveFinalData();
         }
@@ -391,17 +362,16 @@ public class SFAPageTwoFragment extends Fragment {
             data.put("imageName", imageName);
             data.put("subjectId", subjectId);
             data.put("experiment", "SFAStep2Part1");
-            data.put("sessionCount", sessionCount); // 用户访问这个Fragment的总次数
             data.put("totalDuration", finalTotalTime); // 累计停留时间
             data.put("submitClickCount", submitClickCount); // 总点击submit次数
 
             // 原始特征数据
-            List<String> originalFeatures = new ArrayList<>();
-            for (Feature feature : selectedFeatures) {
-                originalFeatures.add(feature.getFeatureZh());
-            }
-            data.put("originalFeatures", originalFeatures);
-            data.put("correctFeatures", correctFeaturesText);
+//            List<String> originalFeatures = new ArrayList<>();
+//            for (Feature feature : selectedFeatures) {
+//                originalFeatures.add(feature.getFeatureZh());
+//            }
+//            data.put("originalFeatures", originalFeatures);
+//            data.put("correctFeatures", correctFeaturesText);
 
             // 最终状态
             List<Map<String, Object>> featuresContainerData = collectContainerData(featuresContainer);
