@@ -66,6 +66,7 @@ public class SFAPageFiveFragment extends Fragment {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -408,7 +409,7 @@ public class SFAPageFiveFragment extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(32, 1, 32, 1);
+        layoutParams.setMargins(32, 3, 32, 3);
         questionLayout.setLayoutParams(layoutParams);
 
         // 动态生成正确答案的 ID

@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean fragmentsAdded = false; //
     private boolean isSwipeEnabled = true; // 是否允许滑动
     private String currentSubjectId;
-
+    private boolean childViewPagerAtLastPage = false;
     private List<String> imageNames;
-
+    private AlertDialog dialog;
     private Map<String, FeatureData> imageFeatureDataMap = new HashMap<>();
 
     public static class FeatureData {
@@ -154,8 +154,10 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(new VNESTPageFive());
             fragmentList.add(new VNESTPageSix());
             fragmentList.add(new VNESTPageSeven());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("C".equals(userSelection)) {
             fragmentList.add(new RabStorPageOne());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("D".equals(userSelection)) {
             fragmentList.add(new LanSdyPageOne(new LanSdyPageOne.SelectionCallback() {
                 @Override
@@ -166,18 +168,26 @@ public class MainActivity extends AppCompatActivity {
                 }
             }));
         } else if ("E".equals(userSelection)) {
+            fragmentList.add(NameScreenInstruction.newInstance("請說出每個物體的名稱"));
             fragmentList.add(new NameScreenPageOne());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("F".equals(userSelection)) {
+            fragmentList.add(NameScreenInstruction.newInstance("請說出每個動作的名稱"));
             fragmentList.add(new NameScreenPageTwo());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("G".equals(userSelection)) {
             fragmentList.add(new AphasiaBankPageOne());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("H".equals(userSelection)) {
             fragmentList.add(new PAPTPageOne());
             fragmentList.add(new PAPTPageTwo());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("I".equals(userSelection)) {
             fragmentList.add(new SCPPageOne());
+            fragmentList.add(new ExperimentEndFragment());
         } else if ("J".equals(userSelection)) {
             fragmentList.add(new SPDPageOne());
+            fragmentList.add(new ExperimentEndFragment());
         }
 
         // 设置适配器
@@ -188,12 +198,48 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                int lastPosition = fragmentList.size() - 1;
                 if ("D".equals(userSelection) && position == 0) {
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                } else if ("H".equals(userSelection) && position == 1) {
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                } else if ("I".equals(userSelection) && position == 0) {
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                } else if (position == lastPosition) {
                     isSwipeEnabled = false; // 禁用滑动
                     setViewPagerSwipeEnabled(viewPager, false);
                 }
             }
         });
+    }
+
+    public void setChildViewPagerAtLastPage(boolean atLastPage) {
+        this.childViewPagerAtLastPage = atLastPage;
+    }
+
+    public ViewPager2 getViewPager() {
+        return viewPager;
+    }
+
+    public void moveToNextFragment() {
+        int currentItem = viewPager.getCurrentItem();
+        if (currentItem < fragmentList.size() - 1) {
+            viewPager.setCurrentItem(currentItem + 1, true);
+        } else {
+            // 已经是最后一个Fragment，可以结束Activity
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        super.onDestroy();
     }
 
     private void showImageNameInputDialog() {
@@ -222,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
 
         // 手动处理确定按钮点击事件
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -336,6 +382,18 @@ public class MainActivity extends AppCompatActivity {
         // 设置适配器
         adapter = new ViewPagerAdapter(this, fragmentList);
         viewPager.setAdapter(adapter);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                int lastPosition = fragmentList.size() - 1;
+                if (position == lastPosition) {
+                    isSwipeEnabled = false; // 禁用滑动
+                    setViewPagerSwipeEnabled(viewPager, false);
+                }
+            }
+        });
     }
 
     private void createSFAFragments() {
@@ -396,6 +454,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(SFAPageSixFragment.newInstance(imageName));
             fragmentList.add(SFAPageSevenFragment.newInstance(imageName));
         }
+        fragmentList.add(new ExperimentEndFragment());
     }
 
     private void loadAllImageFeatures() {

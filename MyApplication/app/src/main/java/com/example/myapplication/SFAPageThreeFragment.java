@@ -161,7 +161,7 @@ public class SFAPageThreeFragment extends Fragment {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
-                params.setMargins(6, 6, 6, 6);
+                params.setMargins(8, 6, 8, 6);
 
                 featuresContainer.addView(featureView, params);
             }
@@ -171,8 +171,8 @@ public class SFAPageThreeFragment extends Fragment {
     private TextView createFeatureTextView(String text) {
         TextView textView = new TextView(getContext());
         textView.setText(text);
-        textView.setTextSize(30);
-        textView.setPadding(2, 0, 2, 0);
+        textView.setTextSize(36);
+        textView.setPadding(3, 3, 3, 3);
         textView.setTextColor(android.graphics.Color.WHITE);
         textView.setGravity(Gravity.CENTER);
         textView.setMaxLines(4);
@@ -243,7 +243,7 @@ public class SFAPageThreeFragment extends Fragment {
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
-                        layoutParams.setMargins(3, 3, 3, 3);
+                        layoutParams.setMargins(6, 4, 6, 4);
                         layoutParams.gravity = Gravity.CENTER;
                         target.addView(droppedTextView, layoutParams);
 
@@ -267,7 +267,7 @@ public class SFAPageThreeFragment extends Fragment {
                                     ViewGroup.LayoutParams.WRAP_CONTENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT
                             );
-                            defaultParams.setMargins(6, 6, 6, 6);
+                            defaultParams.setMargins(8, 6, 8, 6);
                             featuresContainer.addView(droppedTextView, defaultParams);
                             setupDragForView(droppedTextView);
                         }

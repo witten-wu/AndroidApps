@@ -58,7 +58,7 @@
         <LinearLayout
             android:id="@+id/functionBox"
             android:layout_width="700dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:background="#BBDEFB"
@@ -76,7 +76,7 @@
         <LinearLayout
             android:id="@+id/characteristicsBox"
             android:layout_width="700dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:background="#BBDEFB"
@@ -94,7 +94,7 @@
         <LinearLayout
             android:id="@+id/physicalAttributesBox"
             android:layout_width="700dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:background="#BBDEFB"
@@ -112,7 +112,7 @@
         <LinearLayout
             android:id="@+id/locationBox"
             android:layout_width="700dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:background="#BBDEFB"
@@ -130,7 +130,7 @@
         <LinearLayout
             android:id="@+id/categoryBox"
             android:layout_width="700dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:background="#BBDEFB"
             android:padding="5dp">

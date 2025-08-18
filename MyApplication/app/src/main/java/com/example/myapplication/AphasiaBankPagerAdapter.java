@@ -96,7 +96,7 @@ public class AphasiaBankPagerAdapter extends RecyclerView.Adapter<AphasiaBankPag
             multipleImagesGrid.setRowCount(2);
             multipleImagesGrid.setColumnCount(3);
 
-            int imageWidthDp = 350;
+            int imageWidthDp = 400;
             float density = context.getResources().getDisplayMetrics().density;
             int imageWidth = (int) (imageWidthDp * density);
 
@@ -120,7 +120,7 @@ public class AphasiaBankPagerAdapter extends RecyclerView.Adapter<AphasiaBankPag
                 params.height = GridLayout.LayoutParams.WRAP_CONTENT;
                 params.rowSpec = GridLayout.spec(row);
                 params.columnSpec = GridLayout.spec(column);
-                params.setMargins(5, 50, 5, 50);
+                params.setMargins(0, 30, 0, 30);
 
                 imageView.setLayoutParams(params);
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);

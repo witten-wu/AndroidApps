@@ -25,7 +25,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SCPPageOne extends Fragment {
     private static final String TAG = "SCPPageOne";
@@ -174,11 +177,14 @@ public class SCPPageOne extends Fragment {
             Toast.makeText(getContext(), "实验完成！数据已保存", Toast.LENGTH_SHORT).show();
 
             // 延迟后返回到SelectionActivity
-            new android.os.Handler().postDelayed(() -> {
-                if (getActivity() != null) {
-                    getActivity().finish(); // 结束当前Activity，返回到上一个Activity
-                }
-            }, 1500);
+//            new android.os.Handler().postDelayed(() -> {
+//                if (getActivity() != null) {
+//                    getActivity().finish(); // 结束当前Activity，返回到上一个Activity
+//                }
+//            }, 1500);
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).moveToNextFragment();
+            }
         }
     }
 
@@ -329,22 +335,42 @@ public class SCPPageOne extends Fragment {
 
     private void loadImagesFromAssets() {
         AssetManager assetManager = requireContext().getAssets();
+        imagePaths.clear();
 
         try {
             String[] files = assetManager.list("SentenceComprehension");
             if (files != null) {
                 for (String file : files) {
-                    // 检查是否为图片文件
                     if (isImageFile(file)) {
                         imagePaths.add("SentenceComprehension/" + file);
                     }
                 }
+
+                // 使用自然排序
+                Collections.sort(imagePaths, new Comparator<String>() {
+                    private final Pattern pattern = Pattern.compile("\\d+");
+
+                    @Override
+                    public int compare(String o1, String o2) {
+                        int num1 = extractNumber(o1);
+                        int num2 = extractNumber(o2);
+                        return Integer.compare(num1, num2);
+                    }
+
+                    private int extractNumber(String filename) {
+                        Matcher matcher = pattern.matcher(filename);
+                        if (matcher.find()) {
+                            return Integer.parseInt(matcher.group());
+                        }
+                        return 0;
+                    }
+                });
+
+                // 可选：打乱图片顺序
+                // Collections.shuffle(imagePaths);
+
+                Log.d(TAG, "Loaded " + imagePaths.size() + " images from assets");
             }
-
-            // 可选：打乱图片顺序
-            // Collections.shuffle(imagePaths);
-
-            Log.d(TAG, "Loaded " + imagePaths.size() + " images from assets");
 
         } catch (IOException e) {
             Log.e(TAG, "Error loading images from assets", e);

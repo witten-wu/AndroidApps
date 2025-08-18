@@ -26,7 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SPDPageOne extends Fragment {
 
@@ -65,17 +68,67 @@ public class SPDPageOne extends Fragment {
 
         checkPermissionAndRecord();
 
-        viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
-            // 告诉父视图不要拦截触摸事件
-            v.getParent().requestDisallowInterceptTouchEvent(true);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
 
-            // 检测点击事件
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                v.performClick(); // 调用 performClick() 处理点击
+                // 如果是最后一张图片，允许父ViewPager处理滑动事件
+                boolean isLastPage = (position == imagePaths.size() - 1);
+
+                // 获取父Activity的ViewPager
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mainActivity.setChildViewPagerAtLastPage(isLastPage);
+                }
             }
-
-            return false; // 返回 false 以允许其他事件（如滑动）继续处理
         });
+
+        if (viewPager.getChildAt(0) != null) {
+            viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
+                // 告诉父视图不要拦截触摸事件（除非在最后一页向右滑动）
+                ViewPager2 parentViewPager = getParentViewPager();
+
+                if (parentViewPager != null) {
+                    int currentItem = viewPager.getCurrentItem();
+                    boolean isLastPage = (currentItem == imagePaths.size() - 1);
+
+                    if (isLastPage && event.getAction() == MotionEvent.ACTION_MOVE) {
+                        // 在最后一页，检查滑动方向
+                        // 这里可以根据需要实现具体的滑动方向检测
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                    } else {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.performClick();
+                }
+
+                return false;
+            });
+        }
+
+//        viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
+//            // 告诉父视图不要拦截触摸事件
+//            v.getParent().requestDisallowInterceptTouchEvent(true);
+//
+//            // 检测点击事件
+//            if (event.getAction() == MotionEvent.ACTION_UP) {
+//                v.performClick(); // 调用 performClick() 处理点击
+//            }
+//
+//            return false; // 返回 false 以允许其他事件（如滑动）继续处理
+//        });
+    }
+
+    private ViewPager2 getParentViewPager() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getViewPager();
+        }
+        return null;
     }
 
     private String getSubjectIdFromActivity() {
@@ -143,6 +196,25 @@ public class SPDPageOne extends Fragment {
                     }
                 }
             }
+
+            Collections.sort(imagePaths, new Comparator<String>() {
+                private final Pattern pattern = Pattern.compile("\\d+");
+
+                @Override
+                public int compare(String o1, String o2) {
+                    int num1 = extractNumber(o1);
+                    int num2 = extractNumber(o2);
+                    return Integer.compare(num1, num2);
+                }
+
+                private int extractNumber(String filename) {
+                    Matcher matcher = pattern.matcher(filename);
+                    if (matcher.find()) {
+                        return Integer.parseInt(matcher.group());
+                    }
+                    return 0;
+                }
+            });
 
             // 可选：打乱图片顺序
             // Collections.shuffle(imagePaths);

@@ -57,21 +57,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <View
             android:id="@+id/trashcan"
-            android:layout_width="500dp"
-            android:layout_height="500dp"
-            android:src="@drawable/trashcan2"
-            android:contentDescription="Trashcan"
-            android:layout_gravity="center" />
+            android:layout_width="700dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:background="#CCCCCC"
+            android:contentDescription="Trashcan" />
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/trashcanItemsContainer"
-            android:layout_width="380dp"
-            android:layout_height="400dp"
+            android:layout_width="700dp"
+            android:layout_height="300dp"
             android:background="@android:color/transparent"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
             app:flexWrap="wrap"
             app:justifyContent="flex_start"
             app:alignItems="center"

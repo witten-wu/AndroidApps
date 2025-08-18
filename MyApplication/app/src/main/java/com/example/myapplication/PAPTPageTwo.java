@@ -181,11 +181,14 @@ public class PAPTPageTwo extends Fragment {
             Toast.makeText(getContext(), "实验完成！数据已保存", Toast.LENGTH_SHORT).show();
 
             // 延迟后返回到SelectionActivity
-            new android.os.Handler().postDelayed(() -> {
-                if (getActivity() != null) {
-                    getActivity().finish(); // 结束当前Activity，返回到上一个Activity
-                }
-            }, 1500);
+//            new android.os.Handler().postDelayed(() -> {
+//                if (getActivity() != null) {
+//                    getActivity().finish(); // 结束当前Activity，返回到上一个Activity
+//                }
+//            }, 1500);
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).moveToNextFragment();
+            }
         }
     }
 

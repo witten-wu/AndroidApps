@@ -16,7 +16,8 @@
         <!-- 设置 SubjectIdActivity 为启动页面 -->
         <activity
             android:name=".SubjectIdActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <!-- 设置为启动 Activity -->
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +39,8 @@
 
         <activity
             android:name=".SelectionActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape">
         </activity>
 
         <!-- MainActivity 不再是启动页面 -->

@@ -35,7 +35,7 @@ public class SFAPageTwoFragment extends Fragment {
     private FlexboxLayout featuresContainer;       // 特征条目容器
     //private android.widget.GridLayout trashcanItemsContainer; // 垃圾桶条目容器
     private FlexboxLayout trashcanItemsContainer; // 垃圾桶条目容器
-    private ImageView trashcanImage;             // 垃圾桶图片
+    private View trashcanImage;             // 垃圾桶图片
     private ImageView mainImage;
     private List<String> trashcanContents;       // 用于记录垃圾桶的内容
     private List<Feature> selectedFeatures;
@@ -183,7 +183,7 @@ public class SFAPageTwoFragment extends Fragment {
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
                     );
-            params.setMargins(6, 6, 6, 6);
+            params.setMargins(8, 6, 8, 6);
 
             featuresContainer.addView(featureView, params);
         }
@@ -192,11 +192,11 @@ public class SFAPageTwoFragment extends Fragment {
     private TextView createFeatureTextView(String text) {
         TextView textView = new TextView(getContext());
         textView.setText(text);
-        textView.setTextSize(30); // 稍微调小字体
-        textView.setPadding(2, 0, 2, 0); // 调整内边距
+        textView.setTextSize(36); // 稍微调小字体
+        textView.setPadding(3, 3, 3, 3); // 调整内边距
         textView.setTextColor(android.graphics.Color.WHITE);
         textView.setGravity(Gravity.CENTER);
-        textView.setMaxLines(4); // 限制最大行数
+        textView.setMaxLines(6); // 限制最大行数
         textView.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
         // 设置圆角背景
@@ -248,7 +248,7 @@ public class SFAPageTwoFragment extends Fragment {
                                         ViewGroup.LayoutParams.WRAP_CONTENT,
                                         ViewGroup.LayoutParams.WRAP_CONTENT
                                 );
-                        params.setMargins(3, 3, 3, 3);
+                        params.setMargins(6, 4, 6, 4);
                         trashcanItemsContainer.addView(droppedTextView, params);
 
                         trashcanContents.add(droppedTextView.getText().toString());
@@ -274,7 +274,7 @@ public class SFAPageTwoFragment extends Fragment {
                                             ViewGroup.LayoutParams.WRAP_CONTENT,
                                             ViewGroup.LayoutParams.WRAP_CONTENT
                                     );
-                            defaultParams.setMargins(6, 6, 6, 6);
+                            defaultParams.setMargins(8, 6, 8, 6);
                             featuresContainer.addView(droppedTextView, defaultParams);
                             trashcanContents.remove(droppedTextView.getText().toString());
                             setupDragForView(droppedTextView);

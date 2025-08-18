@@ -22,9 +22,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +43,9 @@ public class NameScreenPageOne extends Fragment {
     private MediaRecorder mediaRecorder; // 录音器
     private boolean isRecording = false; // 是否正在录音
     private String audioFilePath; // 录音文件路径
-    private String subjectId; //
+    private String subjectId; //v
+    private String imageOrderFilePath;
+    private long sessionTimestamp;
 
     @Nullable
     @Override
@@ -52,7 +60,9 @@ public class NameScreenPageOne extends Fragment {
 
         subjectId = getSubjectIdFromActivity();
 
+        sessionTimestamp = System.currentTimeMillis();
         audioFilePath = generateUniqueAudioPath(subjectId);
+        imageOrderFilePath = generateImageOrderFilePath(subjectId);
 
         loadImagesFromAssets();
 
@@ -65,17 +75,67 @@ public class NameScreenPageOne extends Fragment {
 
         checkPermissionAndRecord();
 
-        viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
-            // 告诉父视图不要拦截触摸事件
-            v.getParent().requestDisallowInterceptTouchEvent(true);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
 
-            // 检测点击事件
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                v.performClick(); // 调用 performClick() 处理点击
+                // 如果是最后一张图片，允许父ViewPager处理滑动事件
+                boolean isLastPage = (position == imagePaths.size() - 1);
+
+                // 获取父Activity的ViewPager
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mainActivity.setChildViewPagerAtLastPage(isLastPage);
+                }
             }
-
-            return false; // 返回 false 以允许其他事件（如滑动）继续处理
         });
+
+        if (viewPager.getChildAt(0) != null) {
+            viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
+                // 告诉父视图不要拦截触摸事件（除非在最后一页向右滑动）
+                ViewPager2 parentViewPager = getParentViewPager();
+
+                if (parentViewPager != null) {
+                    int currentItem = viewPager.getCurrentItem();
+                    boolean isLastPage = (currentItem == imagePaths.size() - 1);
+
+                    if (isLastPage && event.getAction() == MotionEvent.ACTION_MOVE) {
+                        // 在最后一页，检查滑动方向
+                        // 这里可以根据需要实现具体的滑动方向检测
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                    } else {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.performClick();
+                }
+
+                return false;
+            });
+        }
+
+//        viewPager.getChildAt(0).setOnTouchListener((v, event) -> {
+//            // 告诉父视图不要拦截触摸事件
+//            v.getParent().requestDisallowInterceptTouchEvent(true);
+//
+//            // 检测点击事件
+//            if (event.getAction() == MotionEvent.ACTION_UP) {
+//                v.performClick(); // 调用 performClick() 处理点击
+//            }
+//
+//            return false; // 返回 false 以允许其他事件（如滑动）继续处理
+//        });
+    }
+
+    private ViewPager2 getParentViewPager() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            return mainActivity.getViewPager();
+        }
+        return null;
     }
 
     private String getSubjectIdFromActivity() {
@@ -88,7 +148,6 @@ public class NameScreenPageOne extends Fragment {
 
     private String generateUniqueAudioPath(String subjectId) {
         String deviceId = getDeviceIdentifier();
-        long timestamp = System.currentTimeMillis();
 
         // 创建目录结构：deviceId/subjectId/NameScreeners/
         File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
@@ -102,12 +161,31 @@ public class NameScreenPageOne extends Fragment {
             if (!created) {
                 Log.e(TAG, "Failed to create folder structure: " + experimentSubFolder.getAbsolutePath());
                 // 如果创建失败，回退到根目录
-                return requireContext().getExternalFilesDir(null).getAbsolutePath() + "/" + timestamp + ".3gp";
+                return requireContext().getExternalFilesDir(null).getAbsolutePath() + "/" + sessionTimestamp + ".3gp";
             }
         }
 
         // 返回完整的文件路径：deviceId/subjectId/NameScreeners/timestamp.3gp
-        return experimentSubFolder.getAbsolutePath() + "/" + timestamp + ".3gp";
+        return experimentSubFolder.getAbsolutePath() + "/" + sessionTimestamp + ".3gp";
+    }
+
+    private String generateImageOrderFilePath(String subjectId) {
+        String deviceId = getDeviceIdentifier();
+
+        File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
+        File subjectFolder = new File(deviceFolder, subjectId);
+        File experimentFolder = new File(subjectFolder, "NameScreeners");
+        File experimentSubFolder = new File(experimentFolder, "Noun");
+
+        if (!experimentSubFolder.exists()) {
+            boolean created = experimentSubFolder.mkdirs();
+            if (!created) {
+                Log.e(TAG, "Failed to create folder structure for image order");
+                return requireContext().getExternalFilesDir(null).getAbsolutePath() + "/" + sessionTimestamp + "_imageorder.json";
+            }
+        }
+
+        return experimentSubFolder.getAbsolutePath() + "/" + sessionTimestamp + "_imageorder.json";
     }
 
     private String getDeviceIdentifier() {
@@ -158,6 +236,7 @@ public class NameScreenPageOne extends Fragment {
 
                 // 可选：打乱图片顺序
                 Collections.shuffle(imagePaths);
+                saveImageOrder();
 
                 Log.d(TAG, "Loaded " + imagePaths.size() + " images from assets");
             }
@@ -166,6 +245,46 @@ public class NameScreenPageOne extends Fragment {
             Toast.makeText(requireContext(), "加载图片失败", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void saveImageOrder() {
+        try {
+            JSONObject orderData = new JSONObject();
+            orderData.put("subjectId", subjectId);
+            orderData.put("experimentType", "NameScreenNoun");
+            orderData.put("sessionTimestamp", sessionTimestamp);
+            orderData.put("audioFilePath", audioFilePath);
+            orderData.put("totalImages", imagePaths.size());
+
+            // 保存图片顺序数组
+            JSONArray imageOrder = new JSONArray();
+            for (int i = 0; i < imagePaths.size(); i++) {
+                JSONObject imageInfo = new JSONObject();
+                imageInfo.put("index", i);
+                imageInfo.put("imagePath", imagePaths.get(i));
+
+                // 提取图片名称（不包含路径）
+                String imageName = imagePaths.get(i);
+                if (imageName.contains("/")) {
+                    imageName = imageName.substring(imageName.lastIndexOf("/") + 1);
+                }
+                imageInfo.put("imageName", imageName);
+
+                imageOrder.put(imageInfo);
+            }
+            orderData.put("imageOrder", imageOrder);
+
+            // 写入文件
+            FileWriter writer = new FileWriter(imageOrderFilePath);
+            writer.write(orderData.toString(4)); // 格式化JSON，缩进4个空格
+            writer.close();
+
+            Log.d(TAG, "Image order saved to: " + imageOrderFilePath);
+
+        } catch (JSONException | IOException e) {
+            Log.e(TAG, "Error saving image order", e);
+        }
+    }
+
 
     private boolean isImageFile(String fileName) {
         String[] imageExtensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".gif"};
