@@ -87,6 +87,38 @@ public class SelectionActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button buttonG = findViewById(R.id.buttonG);
+        buttonG.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "G"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
+            startActivity(intent);
+        });
+
+        Button buttonH = findViewById(R.id.buttonH);
+        buttonH.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "H"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
+            startActivity(intent);
+        });
+
+        Button buttonI = findViewById(R.id.buttonI);
+        buttonI.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "I"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
+            startActivity(intent);
+        });
+
+        Button buttonJ = findViewById(R.id.buttonJ);
+        buttonJ.setOnClickListener(v -> {
+            Intent intent = new Intent(SelectionActivity.this, MainActivity.class);
+            intent.putExtra("selection", "J"); // 传递选择结果
+            intent.putExtra("subject_id", currentSubjectId); // 传递 Subject ID
+            startActivity(intent);
+        });
+
 //        Button buttonLogout = findViewById(R.id.logoutButton);
 //        buttonLogout.setOnClickListener(v -> {
 //            // 清除登录状态

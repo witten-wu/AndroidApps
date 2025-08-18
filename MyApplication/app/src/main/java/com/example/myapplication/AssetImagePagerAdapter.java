@@ -24,12 +24,13 @@ public class AssetImagePagerAdapter extends RecyclerView.Adapter<AssetImagePager
     private static final String TAG = "AssetImagePagerAdapter";
     private Context context;
     private List<String> imagePaths;
-
+    private int layoutResId;
     private LruCache<String, Bitmap> memoryCache;
 
-    public AssetImagePagerAdapter(Context context, List<String> imagePaths) {
+    public AssetImagePagerAdapter(Context context, List<String> imagePaths, int layoutResId) {
         this.context = context;
         this.imagePaths = imagePaths;
+        this.layoutResId = layoutResId;
 
         // 初始化内存缓存
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -45,7 +46,7 @@ public class AssetImagePagerAdapter extends RecyclerView.Adapter<AssetImagePager
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.ns_image_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(layoutResId, parent, false);
         return new ViewHolder(view);
     }
 

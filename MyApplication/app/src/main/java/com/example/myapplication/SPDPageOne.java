@@ -28,13 +28,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NameScreenPageTwo extends Fragment {
+public class SPDPageOne extends Fragment {
 
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     // 图片资源数组
-    private static final String TAG = "NameScreenPageTwo";
+    private static final String TAG = "SPDPageOne";
     private List<String> imagePaths = new ArrayList<>();
-
     private MediaRecorder mediaRecorder; // 录音器
     private boolean isRecording = false; // 是否正在录音
     private String audioFilePath; // 录音文件路径
@@ -61,7 +60,7 @@ public class NameScreenPageTwo extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
 
         // 使用新的适配器
-        AssetImagePagerAdapter adapter = new AssetImagePagerAdapter(getContext(), imagePaths, R.layout.ns_image_item);
+        AssetImagePagerAdapter adapter = new AssetImagePagerAdapter(getContext(), imagePaths, R.layout.scp_image);
         viewPager.setAdapter(adapter);
 
         checkPermissionAndRecord();
@@ -91,11 +90,10 @@ public class NameScreenPageTwo extends Fragment {
         String deviceId = getDeviceIdentifier();
         long timestamp = System.currentTimeMillis();
 
-        // 创建目录结构：deviceId/subjectId/NameScreeners/
         File deviceFolder = new File(requireContext().getExternalFilesDir(null), deviceId);
         File subjectFolder = new File(deviceFolder, subjectId);
-        File experimentFolder = new File(subjectFolder, "NameScreeners");
-        File experimentSubFolder = new File(experimentFolder, "Verb");
+        File experimentFolder = new File(subjectFolder, "Sentence");
+        File experimentSubFolder = new File(experimentFolder, "Production");
 
         // 创建所有必要的目录
         if (!experimentSubFolder.exists()) {
@@ -107,15 +105,14 @@ public class NameScreenPageTwo extends Fragment {
             }
         }
 
-        // 返回完整的文件路径：deviceId/subjectId/NameScreeners/timestamp.3gp
         return experimentSubFolder.getAbsolutePath() + "/" + timestamp + ".3gp";
     }
 
     private String getDeviceIdentifier() {
         try {
-            String androidId = android.provider.Settings.Secure.getString(
+            String androidId = Settings.Secure.getString(
                     requireContext().getContentResolver(),
-                    android.provider.Settings.Secure.ANDROID_ID
+                    Settings.Secure.ANDROID_ID
             );
 
             // 确保 Android ID 有效（不为空且不是已知的无效值）
@@ -137,31 +134,21 @@ public class NameScreenPageTwo extends Fragment {
         AssetManager assetManager = requireContext().getAssets();
 
         try {
-            // 获取Noun文件夹下的所有子文件夹
-            String[] categories = assetManager.list("Verb");
-            if (categories != null) {
-                for (String category : categories) {
-                    try {
-                        // 获取每个子文件夹下的文件
-                        String[] files = assetManager.list("Verb/" + category);
-                        if (files != null) {
-                            for (String file : files) {
-                                // 检查是否为图片文件
-                                if (isImageFile(file)) {
-                                    imagePaths.add("Verb/" + category + "/" + file);
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error reading category: " + category, e);
+            String[] files = assetManager.list("SentenceProduction");
+            if (files != null) {
+                for (String file : files) {
+                    // 检查是否为图片文件
+                    if (isImageFile(file)) {
+                        imagePaths.add("SentenceProduction/" + file);
                     }
                 }
-
-                // 可选：打乱图片顺序
-                Collections.shuffle(imagePaths);
-
-                Log.d(TAG, "Loaded " + imagePaths.size() + " images from assets");
             }
+
+            // 可选：打乱图片顺序
+            // Collections.shuffle(imagePaths);
+
+            Log.d(TAG, "Loaded " + imagePaths.size() + " images from assets");
+
         } catch (IOException e) {
             Log.e(TAG, "Error loading images from assets", e);
             Toast.makeText(requireContext(), "加载图片失败", Toast.LENGTH_SHORT).show();
@@ -169,7 +156,7 @@ public class NameScreenPageTwo extends Fragment {
     }
 
     private boolean isImageFile(String fileName) {
-        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp"};
+        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".gif"};
         String lowerFileName = fileName.toLowerCase();
         for (String ext : imageExtensions) {
             if (lowerFileName.endsWith(ext)) {

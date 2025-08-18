@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private String userSelection;
     private boolean fragmentsAdded = false; //
     private boolean isSwipeEnabled = true; // 是否允许滑动
-
     private String currentSubjectId;
 
     private List<String> imageNames;
@@ -171,6 +169,15 @@ public class MainActivity extends AppCompatActivity {
             fragmentList.add(new NameScreenPageOne());
         } else if ("F".equals(userSelection)) {
             fragmentList.add(new NameScreenPageTwo());
+        } else if ("G".equals(userSelection)) {
+            fragmentList.add(new AphasiaBankPageOne());
+        } else if ("H".equals(userSelection)) {
+            fragmentList.add(new PAPTPageOne());
+            fragmentList.add(new PAPTPageTwo());
+        } else if ("I".equals(userSelection)) {
+            fragmentList.add(new SCPPageOne());
+        } else if ("J".equals(userSelection)) {
+            fragmentList.add(new SPDPageOne());
         }
 
         // 设置适配器

@@ -7,6 +7,7 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -19,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp"
+            android:padding="5dp"
             android:gravity="center_vertical">
 
             <ImageView
@@ -45,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="10dp"
+
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true">
@@ -67,101 +68,193 @@
 
             </LinearLayout>
 
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/CardView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp">
 
-    <Button
-        android:id="@+id/buttonE"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="Naming Screener - Noun"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:gravity="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:clipToPadding="false">
 
-    <Button
-        android:id="@+id/buttonF"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="Naming Screener - Verb"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonE"/>
+            <!-- Assessment Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="#FFF3E0"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
-    <Button
-        android:id="@+id/buttonA"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="SFA"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonF"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-    <Button
-        android:id="@+id/buttonB"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="VNeST"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonA" />
+                    <!-- Assessment Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/buttonC"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="Rabbit Story"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonB" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Assessment"
+                            android:textColor="#F57C00"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/buttonD"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:text="Language Study"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonC" />
+                    </LinearLayout>
 
-<!--    <Button-->
-<!--        android:id="@+id/logoutButton"-->
-<!--        android:layout_width="210dp"-->
-<!--        android:layout_height="55dp"-->
-<!--        android:text="退出登录"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/buttonD"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+                    <!-- Assessment Buttons -->
+                    <Button
+                        android:id="@+id/buttonE"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Naming Screener - Noun"
+                        android:textSize="14sp" />
 
-<!--    <Button-->
-<!--        android:id="@+id/exchangeSubjectButton"-->
-<!--        android:layout_width="210dp"-->
-<!--        android:layout_height="55dp"-->
-<!--        android:text="切换被试"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/buttonD"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
-    </LinearLayout>
+                    <Button
+                        android:id="@+id/buttonF"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Naming Screener - Verb"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonC"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Rabbit Story"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonG"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="AphasiaBank"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonH"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Pyramids and Palm Trees"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonI"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Sentence Comprehension"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonJ"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:backgroundTint="#FF9800"
+                        android:text="Sentence Production"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Treatment Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#E8F5E8"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <!-- Treatment Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Treatment"
+                            android:textColor="#388E3C"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- Treatment Buttons -->
+                    <Button
+                        android:id="@+id/buttonA"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#4CAF50"
+                        android:text="SFA"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonB"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#4CAF50"
+                        android:text="VNeST"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/buttonD"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:backgroundTint="#4CAF50"
+                        android:text="Language Study"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

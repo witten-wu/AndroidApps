@@ -60,7 +60,7 @@ public class NameScreenPageOne extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
 
         // 使用新的适配器
-        AssetImagePagerAdapter adapter = new AssetImagePagerAdapter(getContext(), imagePaths);
+        AssetImagePagerAdapter adapter = new AssetImagePagerAdapter(getContext(), imagePaths, R.layout.ns_image_item);
         viewPager.setAdapter(adapter);
 
         checkPermissionAndRecord();
