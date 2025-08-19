@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> imageNames;
     private AlertDialog dialog;
     private Map<String, FeatureData> imageFeatureDataMap = new HashMap<>();
-
+    private static final String PREFS_NAME = "SFAWordList";
     public static class FeatureData {
         private List<Feature> selectedFeatures;
         private List<String> correctFeaturesText;
@@ -236,13 +237,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // 在 Activity 销毁前关闭所有 Dialog
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
+            dialog = null;
         }
         super.onDestroy();
     }
 
-    private void showImageNameInputDialog() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 可选：在 Activity 暂停时也关闭 Dialog
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    private void showWordInputDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("请输入要显示的名词(英文)，多个名词用空格分隔：");
 
@@ -324,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
+                        saveWordList(inputText);
+
                         // 所有验证通过，保存图片名称列表
                         imageNames = tempImageNames;
 
@@ -336,6 +354,103 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void showImageNameInputDialog() {
+        // 先尝试读取保存的单词列表
+        String savedWords = getSavedWordList();
+
+        if (savedWords != null && !savedWords.isEmpty()) {
+            // 显示确认对话框，询问是否使用上次的单词列表
+            showConfirmSavedWordsDialog(savedWords);
+        } else {
+            // 没有保存的单词，显示输入对话框
+            showWordInputDialog();
+        }
+    }
+
+    private String getSavedWordList() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return prefs.getString(currentSubjectId, null);
+    }
+
+    private void saveWordList(String wordList) {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(currentSubjectId, wordList);
+        editor.apply();
+    }
+
+    private void showConfirmSavedWordsDialog(String savedWords) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("使用上次输入的单词列表");
+        builder.setMessage("检测到上次输入的单词列表：\n\n" + savedWords.replace(" ", ", ") + "\n\n是否使用这个列表？");
+
+        builder.setPositiveButton("使用", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 使用保存的单词列表
+                processSavedWords(savedWords);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("重新输入", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 显示输入对话框
+                showWordInputDialog();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNeutralButton("清除记录", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 清除保存的记录，然后显示输入对话框
+                clearSavedWordList();
+                showWordInputDialog();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish(); // 返回键退出Activity
+            }
+        });
+
+        if (!isFinishing() && !isDestroyed()) {
+            dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    private void processSavedWords(String savedWords) {
+        String[] imageArray = savedWords.split("\\s+");
+        List<String> tempImageNames = new ArrayList<>();
+        for (String imageName : imageArray) {
+            if (!imageName.trim().isEmpty()) {
+                tempImageNames.add(imageName.trim());
+            }
+        }
+
+        // 随机打乱列表顺序
+        Collections.shuffle(tempImageNames);
+
+        imageNames = tempImageNames;
+        initializeAfterImageInput();
+    }
+
+    private void clearSavedWordList() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(currentSubjectId);
+        editor.apply();
     }
 
     private List<String> validateImageFolders(List<String> imageNames) {

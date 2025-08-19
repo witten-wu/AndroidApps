@@ -11,9 +11,9 @@
     <!-- 完成图标 -->
     <ImageView
         android:id="@+id/completionIcon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@android:drawable/ic_dialog_info"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/baseline_check_circle_24"
         android:tint="#4CAF50"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +43,7 @@
         android:id="@+id/completionMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="謝謝您的參與！"
+        android:text="感謝您的參與！"
         android:textSize="30sp"
         android:textColor="#424242"
         android:gravity="center"
